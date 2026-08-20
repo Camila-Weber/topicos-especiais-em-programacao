@@ -1,0 +1,67 @@
+aluno_id,nome,disciplina,av1,av2,av3,peso1,peso2,peso3
+4c7083f2-f644-4997-ae2a-726fc8ec9c22,João Silva,,,,,,,
+fe2c1a3a-41c8-4833-9c73-e525f60666d5,João Silva,,,,,,,
+fe2c1a3a-41c8-4833-9c73-e525f60666d5,,Matemática,8.00,7.50,9.00,2,3,5
+53eed707-6ebb-4aa1-8c6d-cb6647749e76,Teste,,,,,,,
+53eed707-6ebb-4aa1-8c6d-cb6647749e76,,Matemática,,,,2,3,5
+2323824e-f82d-424a-b412-d42fc6723d09,Teste,,,,,,,
+2323824e-f82d-424a-b412-d42fc6723d09,,Matemática,10.00,5.00,5.00,2,3,5
+178a23b9-6d3f-40be-aed4-6f56ac338d50,Maria,,,,,,,
+178a23b9-6d3f-40be-aed4-6f56ac338d50,,Matemática,8.00,7.00,9.00,2,3,5
+178a23b9-6d3f-40be-aed4-6f56ac338d50,,Física,6.00,7.00,8.00,2,3,5
+83f2351d-8e49-4c77-99ff-e03adf829d88,João Silva,,,,,,,
+40fca8c0-2d2d-423c-bb7c-a791f5ca89c1,João Silva,,,,,,,
+40fca8c0-2d2d-423c-bb7c-a791f5ca89c1,,Matemática,8.00,7.50,9.00,2,3,5
+82b6f86f-a645-44e3-8657-91a9351e6ef0,Teste,,,,,,,
+82b6f86f-a645-44e3-8657-91a9351e6ef0,,Matemática,,,,2,3,5
+298ddafe-aca0-48e1-a126-1962ab6d9e65,Teste,,,,,,,
+298ddafe-aca0-48e1-a126-1962ab6d9e65,,Matemática,10.00,5.00,5.00,2,3,5
+17968d26-43ee-437f-83af-db2ed20e4f93,Maria,,,,,,,
+17968d26-43ee-437f-83af-db2ed20e4f93,,Matemática,8.00,7.00,9.00,2,3,5
+17968d26-43ee-437f-83af-db2ed20e4f93,,Física,6.00,7.00,8.00,2,3,5
+5a6f3fcb-7cf1-4884-8220-f5878ad98cfa,João Silva,,,,,,,
+8179bd15-3d91-454a-aa66-b648f15cecbb,João Silva,,,,,,,
+8179bd15-3d91-454a-aa66-b648f15cecbb,,Matemática,8.00,7.50,9.00,2,3,5
+54d819f0-efd2-4f12-9f7f-bc100cf3b96b,Teste,,,,,,,
+54d819f0-efd2-4f12-9f7f-bc100cf3b96b,,Matemática,,,,2,3,5
+004a2c28-c161-4537-8d37-40c988cb3335,Teste,,,,,,,
+004a2c28-c161-4537-8d37-40c988cb3335,,Matemática,10.00,5.00,5.00,2,3,5
+1e0405f6-3caf-4785-8291-90e817d718e0,Maria,,,,,,,
+1e0405f6-3caf-4785-8291-90e817d718e0,,Matemática,8.00,7.00,9.00,2,3,5
+1e0405f6-3caf-4785-8291-90e817d718e0,,Física,6.00,7.00,8.00,2,3,5
+7961ba68-3144-43cf-8e8c-7f600fa859e2,João Silva,,,,,,,
+7961ba68-3144-43cf-8e8c-7f600fa859e2,,Matemática,8.00,7.50,9.00,2,3,5
+4ea4c4d2-6a43-4baf-b5fc-33ac970e2cd9,João Silva,,,,,,,
+5add2629-2e77-4c9f-8ab0-7a302eac5bc8,João Silva,,,,,,,
+5add2629-2e77-4c9f-8ab0-7a302eac5bc8,,Matemática,8.00,7.50,9.00,2,3,5
+120ce740-6fe4-4737-8d19-e743cfdadea4,Teste,,,,,,,
+120ce740-6fe4-4737-8d19-e743cfdadea4,,Matemática,,,,2,3,5
+e2999aaa-c9b1-4915-ac72-b9e799176c6c,Teste,,,,,,,
+e2999aaa-c9b1-4915-ac72-b9e799176c6c,,Matemática,10.00,5.00,5.00,2,3,5
+b9df0a5d-6692-4a59-a2ff-e5ddf9a63e7e,Maria,,,,,,,
+b9df0a5d-6692-4a59-a2ff-e5ddf9a63e7e,,Matemática,8.00,7.00,9.00,2,3,5
+b9df0a5d-6692-4a59-a2ff-e5ddf9a63e7e,,Física,6.00,7.00,8.00,2,3,5
+6a6ad85a-0a97-4e0e-ba10-4315f56b0065,João Silva,,,,,,,
+6a6ad85a-0a97-4e0e-ba10-4315f56b0065,,Matemática,8.00,7.50,9.00,2,3,5
+ef4630a7-f504-45b3-b3e1-f9284ebc28a5,João Silva,,,,,,,
+73b63ef7-d72c-4b24-956f-12d48244c51c,João Silva,,,,,,,
+73b63ef7-d72c-4b24-956f-12d48244c51c,,Matemática,8.00,7.50,9.00,2,3,5
+f1da65cc-8eff-4a3e-86d0-51b99f739428,Teste,,,,,,,
+f1da65cc-8eff-4a3e-86d0-51b99f739428,,Matemática,,,,2,3,5
+c5be1eaf-d9c9-4dbc-826f-38a30d9b49fa,Teste,,,,,,,
+c5be1eaf-d9c9-4dbc-826f-38a30d9b49fa,,Matemática,10.00,5.00,5.00,2,3,5
+383e648b-eff6-42d8-9f7e-cf275d78d2ab,Maria,,,,,,,
+383e648b-eff6-42d8-9f7e-cf275d78d2ab,,Matemática,8.00,7.00,9.00,2,3,5
+383e648b-eff6-42d8-9f7e-cf275d78d2ab,,Física,6.00,7.00,8.00,2,3,5
+3740d399-ea0d-4496-a951-f6360f6627a0,Camila,,,,,,,
+3740d399-ea0d-4496-a951-f6360f6627a0,,Matemática,8.50,8.00,10.00,2,3,5
+eaed4e3a-d1b5-4606-870b-ea9e42bfdb2b,João Silva,,,,,,,
+73bf418d-3ae9-4520-b144-b493a31f7ddd,João Silva,,,,,,,
+73bf418d-3ae9-4520-b144-b493a31f7ddd,,Matemática,8.00,7.50,9.00,2,3,5
+3512e606-7c24-4e9c-b51d-4d703cf193ed,Teste,,,,,,,
+3512e606-7c24-4e9c-b51d-4d703cf193ed,,Matemática,,,,2,3,5
+fda185ff-b5d4-47f7-a73b-379c0ea45725,Teste,,,,,,,
+fda185ff-b5d4-47f7-a73b-379c0ea45725,,Matemática,10.00,5.00,5.00,2,3,5
+616eed85-7715-46cf-afe4-552d15b6e889,Maria,,,,,,,
+616eed85-7715-46cf-afe4-552d15b6e889,,Matemática,8.00,7.00,9.00,2,3,5
+616eed85-7715-46cf-afe4-552d15b6e889,,Física,6.00,7.00,8.00,2,3,5
