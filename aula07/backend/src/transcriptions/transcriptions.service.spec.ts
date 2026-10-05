@@ -26,7 +26,14 @@ describe('TranscriptionsService', () => {
     providerFails = false,
     transcriptions = [] as Transcription[],
     detail = null as Transcription | null,
+    audio = null as Transcription | null,
   } = {}) {
+    const queryBuilder = {
+      addSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      getOne: jest.fn().mockResolvedValue(audio),
+    };
     const repository = {
       create: jest.fn((data) => ({
         id: 'transcription-id',
@@ -36,10 +43,16 @@ describe('TranscriptionsService', () => {
       save: jest.fn(async (entity) => entity),
       find: jest.fn().mockResolvedValue(transcriptions),
       findOne: jest.fn().mockResolvedValue(detail),
+      createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
     } as unknown as Repository<Transcription>;
     const storageService = {
       saveAudio: jest.fn().mockResolvedValue(storedFile),
       removeAudio: jest.fn().mockResolvedValue(undefined),
+      getAudioFile: jest.fn().mockResolvedValue({
+        path: '/tmp/server-file.mp3',
+        size: 10,
+      }),
+      createReadStream: jest.fn(),
     } as unknown as StorageService;
     const provider = {
       transcribe: providerFails
@@ -56,6 +69,7 @@ describe('TranscriptionsService', () => {
       repository,
       storageService,
       provider,
+      queryBuilder,
     };
   }
 
@@ -178,6 +192,46 @@ describe('TranscriptionsService', () => {
     const { service } = createService();
 
     await expect(service.findOneForUser('user-id', 'missing-id')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+  });
+
+  it('returns audio metadata for an authenticated owner', async () => {
+    const transcription = {
+      id: 'transcription-id',
+      userId: 'user-id',
+      originalFileName: 'reuniao.mp3',
+      storedFileName: 'server-file.mp3',
+      mimeType: 'audio/mpeg',
+      fileSize: 10,
+    } as Transcription;
+    const { service, repository, storageService, queryBuilder } = createService({
+      audio: transcription,
+    });
+
+    const result = await service.getAudioForUser('user-id', 'transcription-id');
+
+    expect(repository.createQueryBuilder).toHaveBeenCalledWith('transcription');
+    expect(queryBuilder.addSelect).toHaveBeenCalledWith('transcription.storedFileName');
+    expect(queryBuilder.where).toHaveBeenCalledWith('transcription.id = :id', {
+      id: 'transcription-id',
+    });
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith('transcription.userId = :userId', {
+      userId: 'user-id',
+    });
+    expect(storageService.getAudioFile).toHaveBeenCalledWith('server-file.mp3');
+    expect(result).toEqual({
+      storedFileName: 'server-file.mp3',
+      originalFileName: 'reuniao.mp3',
+      mimeType: 'audio/mpeg',
+      fileSize: 10,
+    });
+  });
+
+  it('returns 404 when audio does not exist or belongs to another user', async () => {
+    const { service } = createService();
+
+    await expect(service.getAudioForUser('user-id', 'missing-id')).rejects.toBeInstanceOf(
       NotFoundException,
     );
   });

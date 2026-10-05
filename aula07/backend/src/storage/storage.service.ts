@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'node:crypto';
+import { stat } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import {
@@ -45,6 +47,20 @@ export class StorageService {
     await rm(join(this.getStoragePath(), storedFileName), {
       force: true,
     });
+  }
+
+  async getAudioFile(storedFileName: string) {
+    const filePath = join(this.getStoragePath(), storedFileName);
+    const fileStat = await stat(filePath);
+
+    return {
+      path: filePath,
+      size: fileStat.size,
+    };
+  }
+
+  createReadStream(storedFileName: string, range?: { start: number; end: number }) {
+    return createReadStream(join(this.getStoragePath(), storedFileName), range);
   }
 
   private validateAudio(file: UploadedAudioFile | undefined) {

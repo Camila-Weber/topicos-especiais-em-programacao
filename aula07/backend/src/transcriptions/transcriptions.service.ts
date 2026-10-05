@@ -72,4 +72,42 @@ export class TranscriptionsService {
 
     return toTranscriptionResponse(transcription);
   }
+
+  async getAudioForUser(userId: string, id: string) {
+    const transcription = await this.transcriptionsRepository
+      .createQueryBuilder('transcription')
+      .addSelect('transcription.storedFileName')
+      .where('transcription.id = :id', { id })
+      .andWhere('transcription.userId = :userId', { userId })
+      .getOne();
+
+    if (!transcription) {
+      throw new NotFoundException({
+        statusCode: 404,
+        code: 'AUDIO_NOT_FOUND',
+        message: 'Audio nao encontrado.',
+      });
+    }
+
+    try {
+      const file = await this.storageService.getAudioFile(transcription.storedFileName);
+
+      return {
+        storedFileName: transcription.storedFileName,
+        originalFileName: transcription.originalFileName,
+        mimeType: transcription.mimeType,
+        fileSize: file.size,
+      };
+    } catch {
+      throw new NotFoundException({
+        statusCode: 404,
+        code: 'AUDIO_NOT_FOUND',
+        message: 'Audio nao encontrado.',
+      });
+    }
+  }
+
+  createAudioStream(storedFileName: string, range?: { start: number; end: number }) {
+    return this.storageService.createReadStream(storedFileName, range);
+  }
 }

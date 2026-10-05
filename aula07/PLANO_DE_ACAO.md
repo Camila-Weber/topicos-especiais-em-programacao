@@ -206,16 +206,24 @@ Validacao:
 
 Subetapas:
 
-- [ ] Implementar `GET /api/transcriptions/:id/audio`.
-- [ ] Validar propriedade.
-- [ ] Criar player com `Blob URL` autenticada.
+- [x] Implementar `GET /api/transcriptions/:id/audio`.
+- [x] Validar propriedade.
+- [x] Criar player com `Blob URL` autenticada.
 
 Criterios de aceite:
 
-- [ ] Usuario reproduz audio proprio.
-- [ ] Audio alheio retorna `404`.
-- [ ] Sem token retorna `401`.
-- [ ] Diretorio de audio nao e publico.
+- [x] Usuario reproduz audio proprio.
+- [x] Audio alheio retorna `404`.
+- [x] Sem token retorna `401`.
+- [x] Diretorio de audio nao e publico.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [x] Endpoint suporta `Range` quando informado.
+- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 10. Fluxo de Download
 

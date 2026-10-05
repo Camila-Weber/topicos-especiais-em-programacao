@@ -660,6 +660,8 @@ function TranscriptionDetailPage() {
   const [detail, setDetail] = useState<TranscriptionResult | null>(null);
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Carregando transcricao...');
+  const [audioUrl, setAudioUrl] = useState('');
+  const [audioMessage, setAudioMessage] = useState('Carregando audio...');
 
   useEffect(() => {
     let active = true;
@@ -694,6 +696,47 @@ function TranscriptionDetailPage() {
       active = false;
     };
   }, [id]);
+
+  useEffect(() => {
+    let active = true;
+    let currentAudioUrl = '';
+
+    if (!id || !detail) {
+      return;
+    }
+
+    setAudioMessage('Carregando audio...');
+    setAudioUrl('');
+
+    api
+      .get<Blob>(`/transcriptions/${id}/audio`, {
+        responseType: 'blob',
+      })
+      .then((response) => {
+        if (!active) {
+          return;
+        }
+
+        currentAudioUrl = URL.createObjectURL(response.data);
+        setAudioUrl(currentAudioUrl);
+        setAudioMessage('');
+      })
+      .catch((error) => {
+        if (!active) {
+          return;
+        }
+
+        setAudioMessage(getApiMessage(error) || 'Nao foi possivel carregar o audio.');
+      });
+
+    return () => {
+      active = false;
+
+      if (currentAudioUrl) {
+        URL.revokeObjectURL(currentAudioUrl);
+      }
+    };
+  }, [id, detail]);
 
   return (
     <PrivateLayout>
@@ -744,10 +787,11 @@ function TranscriptionDetailPage() {
               </dl>
 
               <div className="detail-actions">
-                <button className="button button-secondary" disabled type="button">
-                  <FileAudio aria-hidden="true" />
-                  Player na etapa 9
-                </button>
+                {audioUrl ? (
+                  <audio controls src={audioUrl} />
+                ) : (
+                  <p className="history-state">{audioMessage}</p>
+                )}
                 <button className="button button-secondary" disabled type="button">
                   <Download aria-hidden="true" />
                   Download na etapa 10
