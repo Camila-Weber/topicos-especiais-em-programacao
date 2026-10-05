@@ -1,6 +1,9 @@
 import {
+  Activity,
   ArrowRight,
   Check,
+  Clock,
+  Database,
   Download,
   Eye,
   FileText,
@@ -9,8 +12,13 @@ import {
   Lock,
   LogIn,
   LogOut,
+  PlayCircle,
+  Server,
   ShieldCheck,
+  Sparkles,
   Trash2,
+  UploadCloud,
+  UserCheck,
   UserPlus,
   X,
 } from 'lucide-react';
@@ -45,8 +53,70 @@ function PublicHeader() {
   );
 }
 
+const demoStages = [
+  {
+    id: 'upload',
+    label: 'Upload',
+    title: 'Arquivo recebido',
+    description: 'O audio entra por uma rota autenticada e passa pelas validacoes de formato e tamanho.',
+    progress: 34,
+  },
+  {
+    id: 'transcription',
+    label: 'Transcricao',
+    title: 'Whisper trabalhando',
+    description: 'O backend envia o arquivo para a Groq e acompanha o retorno sem expor chaves no navegador.',
+    progress: 68,
+  },
+  {
+    id: 'done',
+    label: 'Concluido',
+    title: 'Texto pronto',
+    description: 'A transcricao fica salva no historico privado, junto com o player e o download do audio.',
+    progress: 100,
+  },
+] as const;
+
+const productFlow = [
+  {
+    title: 'Envio do audio',
+    description: 'O usuario seleciona um unico arquivo e visualiza nome, tamanho e formato antes de enviar.',
+    icon: UploadCloud,
+  },
+  {
+    title: 'Validacao privada',
+    description: 'O backend valida autenticacao, formato e limite de 25 MB antes de gravar o arquivo.',
+    icon: ShieldCheck,
+  },
+  {
+    title: 'Transcricao',
+    description: 'A Groq e chamada somente pela API, mantendo a chave fora do frontend.',
+    icon: Sparkles,
+  },
+  {
+    title: 'Historico',
+    description: 'Cada usuario consulta apenas as proprias transcricoes, ordenadas da mais recente para a mais antiga.',
+    icon: History,
+  },
+  {
+    title: 'Player e download',
+    description: 'O audio e reproduzido por Blob URL autenticada e pode ser baixado quando necessario.',
+    icon: PlayCircle,
+  },
+  {
+    title: 'Exclusao segura',
+    description: 'Ao excluir, o registro e o arquivo fisico associado deixam de ficar disponiveis.',
+    icon: Trash2,
+  },
+];
+
 function LandingPage() {
   const [apiStatus, setApiStatus] = useState('Verificando API...');
+  const [selectedStage, setSelectedStage] = useState(0);
+  const [selectedFlow, setSelectedFlow] = useState(0);
+  const currentStage = demoStages[selectedStage];
+  const currentFlow = productFlow[selectedFlow];
+  const CurrentFlowIcon = currentFlow.icon;
 
   useEffect(() => {
     let active = true;
@@ -76,10 +146,10 @@ function LandingPage() {
       <section className="landing-hero">
         <div className="landing-copy">
           <p className="eyebrow">Transcricao privada de audio</p>
-          <h1>Ditado transforma arquivos de audio em texto consultavel.</h1>
+          <h1>Ditado transforma audio em texto, historico e consulta segura.</h1>
           <p className="lead">
-            Envie um audio, acompanhe a transcricao e mantenha um historico pessoal com reproducao
-            e download do arquivo original.
+            Uma aplicacao full stack para enviar audios, acompanhar a transcricao, revisar o texto,
+            reproduzir o arquivo original e manter tudo organizado em uma area privada.
           </p>
           <div className="hero-actions">
             <Link className="button button-primary" to="/cadastro">
@@ -91,30 +161,213 @@ function LandingPage() {
               <ArrowRight aria-hidden="true" />
             </Link>
           </div>
+          <div className="hero-metrics" aria-label="Resumo do sistema">
+            <div>
+              <strong>25 MB</strong>
+              <span>limite por audio</span>
+            </div>
+            <div>
+              <strong>5 min</strong>
+              <span>validade do JWT</span>
+            </div>
+            <div>
+              <strong>404</strong>
+              <span>para recurso alheio</span>
+            </div>
+          </div>
         </div>
 
-        <div className="flow-panel" aria-label="Fluxo do produto">
-          <div className="flow-step">
+        <div className="demo-panel" aria-label="Demonstracao do produto">
+          <div className="motion-orbit motion-orbit-one" aria-hidden="true" />
+          <div className="motion-orbit motion-orbit-two" aria-hidden="true" />
+          <div className="demo-toolbar">
+            <span className="status-dot" />
+            <span>{apiStatus}</span>
+          </div>
+          <div className="audio-card">
+            <div>
+              <p className="audio-name">reuniao-projeto.webm</p>
+              <span>18.4 MB - audio privado</span>
+            </div>
             <FileAudio aria-hidden="true" />
-            <span>1</span>
-            <p>Selecione um arquivo de audio.</p>
           </div>
-          <div className="flow-step">
-            <ShieldCheck aria-hidden="true" />
-            <span>2</span>
-            <p>O backend valida e armazena com seguranca.</p>
+
+          <div className="waveform" aria-hidden="true">
+            {Array.from({ length: 18 }, (_, index) => (
+              <span key={index} style={{ animationDelay: `${index * 80}ms` }} />
+            ))}
           </div>
-          <div className="flow-step">
-            <History aria-hidden="true" />
-            <span>3</span>
-            <p>Consulte texto, player e historico privado.</p>
+
+          <div className="stage-tabs" aria-label="Etapas demonstrativas">
+            {demoStages.map((stage, index) => (
+              <button
+                className={selectedStage === index ? 'active' : ''}
+                key={stage.id}
+                onClick={() => setSelectedStage(index)}
+                type="button"
+              >
+                {stage.label}
+              </button>
+            ))}
           </div>
-          <div className="flow-step">
+
+          <div className="demo-stage-card">
+            <div className="stage-header">
+              <Activity aria-hidden="true" />
+              <span>{currentStage.title}</span>
+            </div>
+            <p>{currentStage.description}</p>
+            <div className="progress-track" aria-label={`Progresso demonstrativo ${currentStage.progress}%`}>
+              <span style={{ width: `${currentStage.progress}%` }} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-section flow-showcase" aria-labelledby="flow-title">
+        <div className="section-heading">
+          <p className="eyebrow">Fluxo principal</p>
+          <h2 id="flow-title">Da selecao do audio ate a consulta no historico.</h2>
+          <p>
+            O Ditado organiza o caminho completo da transcricao, separando interface, API, banco,
+            armazenamento privado e provedor externo.
+          </p>
+        </div>
+
+        <div className="flow-grid">
+          <div className="flow-list" role="tablist" aria-label="Etapas do fluxo">
+            {productFlow.map((step, index) => {
+              const StepIcon = step.icon;
+
+              return (
+                <button
+                  aria-selected={selectedFlow === index}
+                  className={`flow-step ${selectedFlow === index ? 'active' : ''}`}
+                  key={step.title}
+                  onClick={() => setSelectedFlow(index)}
+                  role="tab"
+                  type="button"
+                >
+                  <StepIcon aria-hidden="true" />
+                  <span>{index + 1}</span>
+                  <p>{step.title}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          <article className="flow-detail" role="tabpanel">
+            <CurrentFlowIcon aria-hidden="true" />
+            <p className="eyebrow">Etapa {selectedFlow + 1}</p>
+            <h3>{currentFlow.title}</h3>
+            <p>{currentFlow.description}</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="landing-section feature-band" aria-labelledby="features-title">
+        <div className="section-heading">
+          <p className="eyebrow">Recursos</p>
+          <h2 id="features-title">O necessario para revisar, comparar e controlar seus audios.</h2>
+        </div>
+        <div className="feature-grid">
+          <article>
+            <FileText aria-hidden="true" />
+            <h3>Texto completo</h3>
+            <p>O resultado fica disponivel em uma tela de detalhe para leitura e conferencia.</p>
+          </article>
+          <article>
+            <PlayCircle aria-hidden="true" />
+            <h3>Player autenticado</h3>
+            <p>O audio e carregado por uma requisicao protegida e usado como URL temporaria.</p>
+          </article>
+          <article>
             <Download aria-hidden="true" />
-            <span>4</span>
-            <p>Baixe o audio original quando precisar.</p>
+            <h3>Download original</h3>
+            <p>O arquivo enviado pode ser baixado com nome amigavel e sem expor caminho interno.</p>
+          </article>
+          <article>
+            <History aria-hidden="true" />
+            <h3>Historico pessoal</h3>
+            <p>As transcricoes aparecem em ordem recente e pertencem apenas ao usuario autenticado.</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="landing-section trust-section" aria-labelledby="trust-title">
+        <div className="trust-copy">
+          <p className="eyebrow">Seguranca aplicada</p>
+          <h2 id="trust-title">Privacidade tratada como parte do fluxo, nao como detalhe.</h2>
+          <p>
+            O backend concentra as regras sensiveis: autenticacao, permissao, validacao do arquivo,
+            chamada da Groq, streaming, download e exclusao.
+          </p>
+        </div>
+        <div className="trust-grid">
+          <div>
+            <Lock aria-hidden="true" />
+            <strong>JWT curto</strong>
+            <span>Sessao expira em 5 minutos e nao usa refresh token no MVP.</span>
           </div>
-          <p className="api-status">{apiStatus}</p>
+          <div>
+            <Database aria-hidden="true" />
+            <strong>Storage privado</strong>
+            <span>Audios ficam fora de pasta publica e usam nome fisico gerado no servidor.</span>
+          </div>
+          <div>
+            <Server aria-hidden="true" />
+            <strong>API como fronteira</strong>
+            <span>Groq e chaves externas nunca passam pelo navegador.</span>
+          </div>
+          <div>
+            <UserCheck aria-hidden="true" />
+            <strong>Isolamento por usuario</strong>
+            <span>Recurso de outra conta retorna 404, inclusive audio, download e detalhe.</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-section admin-preview" aria-labelledby="admin-title">
+        <div>
+          <p className="eyebrow">Administracao</p>
+          <h2 id="admin-title">Controle simples de contas no MVP.</h2>
+          <p>
+            Administradores podem listar usuarios e ativar ou desativar contas, sem expor senha,
+            hash ou mudanca de papel pela interface.
+          </p>
+        </div>
+        <div className="admin-preview-list" aria-label="Previa administrativa">
+          <div>
+            <span className="user-avatar">CM</span>
+            <strong>Camila Mendes</strong>
+            <small>ativa</small>
+          </div>
+          <div>
+            <span className="user-avatar muted">AL</span>
+            <strong>Alex Lima</strong>
+            <small>inativa</small>
+          </div>
+          <div>
+            <span className="user-avatar">RS</span>
+            <strong>Rafa Souza</strong>
+            <small>ativa</small>
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-cta" aria-label="Chamada para cadastro">
+        <Clock aria-hidden="true" />
+        <h2>Comece com um audio e acompanhe todo o ciclo.</h2>
+        <p>Cadastre-se para testar o fluxo completo: upload, transcricao, historico, player e download.</p>
+        <div className="hero-actions">
+          <Link className="button button-primary" to="/cadastro">
+            <UserPlus aria-hidden="true" />
+            Criar conta
+          </Link>
+          <Link className="button button-secondary" to="/entrar">
+            Entrar
+            <ArrowRight aria-hidden="true" />
+          </Link>
         </div>
       </section>
     </main>

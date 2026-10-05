@@ -343,6 +343,42 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [ ] Teste de transcricao real com Groq pendente por falta de `GROQ_API_KEY`.
 
+## 15. Evolucao da Landing Page
+
+Objetivo:
+
+- [x] Ampliar a landing page `/` para apresentar melhor o sistema Ditado.
+- [x] Manter foco em produto e fluxos do usuario.
+- [x] Adicionar interatividade moderada sem novas dependencias.
+- [x] Usar objetos visuais com movimento e transicoes suaves.
+
+Subetapas:
+
+- [x] Registrar este plano como novo topico do `PLANO_DE_ACAO.md`.
+- [x] Reorganizar a landing com hero maior, mockup demonstrativo, secoes de fluxo, seguranca, recursos e chamada final.
+- [x] Criar cards de fluxo interativos com descricao detalhada da etapa selecionada.
+- [x] Criar mockup demonstrativo com estados de upload, transcricao e conclusao.
+- [x] Adicionar movimento leve em ondas, barras de audio, indicadores e cards.
+- [x] Preservar status da API consumindo `GET /api/health`.
+- [x] Garantir layout responsivo em desktop e mobile.
+- [x] Adicionar suporte a `prefers-reduced-motion`.
+
+Criterios de aceite:
+
+- [x] `/` continua acessivel para visitantes.
+- [x] Botoes de cadastro e login continuam apontando para `/cadastro` e `/entrar`.
+- [x] Landing contem mais informacoes sobre proposta, fluxo, seguranca, recursos e administracao.
+- [x] Ha partes interativas sem exigir login nem alterar dados reais.
+- [x] Elementos visuais possuem transicoes suaves.
+- [x] Nenhum segredo, token ou caminho interno e exibido.
+- [x] Layout funciona em desktop e mobile.
+- [x] Build do frontend passa.
+
+Validacao:
+
+- [x] Build do frontend passou apos a implementacao.
+- [ ] Validacao visual manual no navegador.
+
 ## Decisoes Consolidadas
 
 - O armazenamento de audio sera local e privado no backend.
