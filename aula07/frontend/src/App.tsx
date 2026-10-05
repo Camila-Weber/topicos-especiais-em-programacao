@@ -662,6 +662,7 @@ function TranscriptionDetailPage() {
   const [message, setMessage] = useState('Carregando transcricao...');
   const [audioUrl, setAudioUrl] = useState('');
   const [audioMessage, setAudioMessage] = useState('Carregando audio...');
+  const [downloadMessage, setDownloadMessage] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -738,6 +739,31 @@ function TranscriptionDetailPage() {
     };
   }, [id, detail]);
 
+  async function handleDownload() {
+    if (!id || !detail) {
+      return;
+    }
+
+    setDownloadMessage('Preparando download...');
+
+    try {
+      const response = await api.get<Blob>(`/transcriptions/${id}/audio/download`, {
+        responseType: 'blob',
+      });
+      const downloadUrl = URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = detail.originalFileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(downloadUrl);
+      setDownloadMessage('');
+    } catch (error) {
+      setDownloadMessage(getApiMessage(error) || 'Nao foi possivel baixar o audio.');
+    }
+  }
+
   return (
     <PrivateLayout>
       <section className="detail-panel">
@@ -792,10 +818,11 @@ function TranscriptionDetailPage() {
                 ) : (
                   <p className="history-state">{audioMessage}</p>
                 )}
-                <button className="button button-secondary" disabled type="button">
+                <button className="button button-secondary" onClick={handleDownload} type="button">
                   <Download aria-hidden="true" />
-                  Download na etapa 10
+                  Baixar audio
                 </button>
+                {downloadMessage ? <p className="history-state">{downloadMessage}</p> : null}
                 <button className="button button-secondary danger" disabled type="button">
                   <Trash2 aria-hidden="true" />
                   Excluir na etapa 11

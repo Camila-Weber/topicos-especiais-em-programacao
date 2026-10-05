@@ -68,6 +68,22 @@ export class TranscriptionsController {
     this.transcriptionsService.createAudioStream(audio.storedFileName).pipe(response);
   }
 
+  @Get(':id/audio/download')
+  async downloadAudio(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') id: string,
+    @Res() response: any,
+  ) {
+    const audio = await this.transcriptionsService.getAudioForUser(user.sub, id);
+
+    response.set({
+      'Content-Type': audio.mimeType,
+      'Content-Length': audio.fileSize,
+      'Content-Disposition': `attachment; filename="${sanitizeHeaderFilename(audio.originalFileName)}"`,
+    });
+    this.transcriptionsService.createAudioStream(audio.storedFileName).pipe(response);
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async create(
@@ -79,6 +95,13 @@ export class TranscriptionsController {
       data: await this.transcriptionsService.create(user.sub, file, dto),
     };
   }
+}
+
+function sanitizeHeaderFilename(filename: string) {
+  return filename
+    .replace(/[/\\]/g, '')
+    .replace(/[\r\n"]/g, '')
+    .trim() || 'audio';
 }
 
 function parseRangeHeader(rangeHeader: string | undefined, fileSize: number) {

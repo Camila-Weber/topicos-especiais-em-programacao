@@ -229,15 +229,22 @@ Validacao:
 
 Subetapas:
 
-- [ ] Implementar `GET /api/transcriptions/:id/audio/download`.
-- [ ] Adicionar botao de download.
+- [x] Implementar `GET /api/transcriptions/:id/audio/download`.
+- [x] Adicionar botao de download.
 
 Criterios de aceite:
 
-- [ ] Download exige autenticacao.
-- [ ] Audio alheio retorna `404`.
-- [ ] `Content-Disposition` usa `attachment`.
-- [ ] Caminho interno nunca e exibido.
+- [x] Download exige autenticacao.
+- [x] Audio alheio retorna `404`.
+- [x] `Content-Disposition` usa `attachment`.
+- [x] Caminho interno nunca e exibido.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 11. Fluxo de Exclusao
 
