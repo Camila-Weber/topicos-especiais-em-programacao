@@ -422,6 +422,15 @@ h1 {
   font-weight: 700;
 }
 
+.history-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.button.danger {
+  color: #9b2c2c;
+}
+
 .detail-panel {
   padding: 28px;
   border: 1px solid #d7e0e3;

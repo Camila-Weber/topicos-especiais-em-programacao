@@ -44,6 +44,7 @@ describe('TranscriptionsService', () => {
       find: jest.fn().mockResolvedValue(transcriptions),
       findOne: jest.fn().mockResolvedValue(detail),
       createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
+      remove: jest.fn().mockResolvedValue(undefined),
     } as unknown as Repository<Transcription>;
     const storageService = {
       saveAudio: jest.fn().mockResolvedValue(storedFile),
@@ -232,6 +233,36 @@ describe('TranscriptionsService', () => {
     const { service } = createService();
 
     await expect(service.getAudioForUser('user-id', 'missing-id')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+  });
+
+  it('removes audio file and database record when deleting an owned transcription', async () => {
+    const transcription = {
+      id: 'transcription-id',
+      userId: 'user-id',
+      storedFileName: 'server-file.mp3',
+    } as Transcription;
+    const { service, repository, storageService, queryBuilder } = createService({
+      audio: transcription,
+    });
+
+    await service.deleteForUser('user-id', 'transcription-id');
+
+    expect(queryBuilder.where).toHaveBeenCalledWith('transcription.id = :id', {
+      id: 'transcription-id',
+    });
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith('transcription.userId = :userId', {
+      userId: 'user-id',
+    });
+    expect(storageService.removeAudio).toHaveBeenCalledWith('server-file.mp3');
+    expect(repository.remove).toHaveBeenCalledWith(transcription);
+  });
+
+  it('returns 404 when deleting a missing or foreign transcription', async () => {
+    const { service } = createService();
+
+    await expect(service.deleteForUser('user-id', 'missing-id')).rejects.toBeInstanceOf(
       NotFoundException,
     );
   });

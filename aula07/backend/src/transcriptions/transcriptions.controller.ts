@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Headers,
   Param,
   Post,
@@ -94,6 +97,12 @@ export class TranscriptionsController {
     return {
       data: await this.transcriptionsService.create(user.sub, file, dto),
     };
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string) {
+    await this.transcriptionsService.deleteForUser(user.sub, id);
   }
 }
 

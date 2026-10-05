@@ -110,4 +110,24 @@ export class TranscriptionsService {
   createAudioStream(storedFileName: string, range?: { start: number; end: number }) {
     return this.storageService.createReadStream(storedFileName, range);
   }
+
+  async deleteForUser(userId: string, id: string) {
+    const transcription = await this.transcriptionsRepository
+      .createQueryBuilder('transcription')
+      .addSelect('transcription.storedFileName')
+      .where('transcription.id = :id', { id })
+      .andWhere('transcription.userId = :userId', { userId })
+      .getOne();
+
+    if (!transcription) {
+      throw new NotFoundException({
+        statusCode: 404,
+        code: 'TRANSCRIPTION_NOT_FOUND',
+        message: 'Transcricao nao encontrada.',
+      });
+    }
+
+    await this.storageService.removeAudio(transcription.storedFileName);
+    await this.transcriptionsRepository.remove(transcription);
+  }
 }

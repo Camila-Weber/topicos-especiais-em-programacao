@@ -577,6 +577,7 @@ function HistoryPage() {
   const [items, setItems] = useState<TranscriptionListItem[]>([]);
   const [status, setStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
   const [message, setMessage] = useState('Carregando historico...');
+  const [deletingId, setDeletingId] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -612,6 +613,38 @@ function HistoryPage() {
     };
   }, []);
 
+  async function handleDelete(id: string, originalFileName: string) {
+    const confirmed = window.confirm(
+      `Excluir a transcricao "${originalFileName}" e remover o audio associado?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setDeletingId(id);
+    setMessage('');
+
+    try {
+      await api.delete(`/transcriptions/${id}`);
+      setItems((currentItems) => {
+        const nextItems = currentItems.filter((item) => item.id !== id);
+
+        if (nextItems.length === 0) {
+          setStatus('empty');
+          setMessage('Voce ainda nao possui transcricoes.');
+        }
+
+        return nextItems;
+      });
+    } catch (error) {
+      setStatus('error');
+      setMessage(getApiMessage(error) || 'Nao foi possivel excluir a transcricao.');
+    } finally {
+      setDeletingId('');
+    }
+  }
+
   return (
     <PrivateLayout>
       <section className="history-panel">
@@ -642,10 +675,21 @@ function HistoryPage() {
                     {formatDate(item.createdAt)} · {formatBytes(item.fileSize)} · {item.language}
                   </span>
                 </div>
-                <Link className="button button-secondary" to={`/app/transcricoes/${item.id}`}>
-                  <Eye aria-hidden="true" />
-                  Visualizar
-                </Link>
+                <div className="history-actions">
+                  <Link className="button button-secondary" to={`/app/transcricoes/${item.id}`}>
+                    <Eye aria-hidden="true" />
+                    Visualizar
+                  </Link>
+                  <button
+                    className="button button-secondary danger"
+                    disabled={deletingId === item.id}
+                    onClick={() => void handleDelete(item.id, item.originalFileName)}
+                    type="button"
+                  >
+                    <Trash2 aria-hidden="true" />
+                    {deletingId === item.id ? 'Excluindo...' : 'Excluir'}
+                  </button>
+                </div>
               </article>
             ))}
           </div>
@@ -663,6 +707,9 @@ function TranscriptionDetailPage() {
   const [audioUrl, setAudioUrl] = useState('');
   const [audioMessage, setAudioMessage] = useState('Carregando audio...');
   const [downloadMessage, setDownloadMessage] = useState('');
+  const [deleteMessage, setDeleteMessage] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let active = true;
@@ -764,6 +811,32 @@ function TranscriptionDetailPage() {
     }
   }
 
+  async function handleDelete() {
+    if (!id || !detail) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Excluir a transcricao "${detail.originalFileName}" e remover o audio associado?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setDeleteMessage('');
+
+    try {
+      await api.delete(`/transcriptions/${id}`);
+      navigate('/app/historico', { replace: true });
+    } catch (error) {
+      setDeleteMessage(getApiMessage(error) || 'Nao foi possivel excluir a transcricao.');
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   return (
     <PrivateLayout>
       <section className="detail-panel">
@@ -823,10 +896,16 @@ function TranscriptionDetailPage() {
                   Baixar audio
                 </button>
                 {downloadMessage ? <p className="history-state">{downloadMessage}</p> : null}
-                <button className="button button-secondary danger" disabled type="button">
+                <button
+                  className="button button-secondary danger"
+                  disabled={isDeleting}
+                  onClick={handleDelete}
+                  type="button"
+                >
                   <Trash2 aria-hidden="true" />
-                  Excluir na etapa 11
+                  {isDeleting ? 'Excluindo...' : 'Excluir'}
                 </button>
+                {deleteMessage ? <p className="history-state error-text">{deleteMessage}</p> : null}
               </div>
             </aside>
 

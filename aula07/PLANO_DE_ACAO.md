@@ -250,16 +250,23 @@ Validacao:
 
 Subetapas:
 
-- [ ] Implementar `DELETE /api/transcriptions/:id`.
-- [ ] Confirmar exclusao no frontend.
-- [ ] Atualizar historico.
+- [x] Implementar `DELETE /api/transcriptions/:id`.
+- [x] Confirmar exclusao no frontend.
+- [x] Atualizar historico.
 
 Criterios de aceite:
 
-- [ ] Exclusao exige autenticacao.
-- [ ] Arquivo fisico e registro sao removidos.
-- [ ] Item deixa de aparecer no historico.
-- [ ] Falhas nao expõem detalhes internos.
+- [x] Exclusao exige autenticacao.
+- [x] Arquivo fisico e registro sao removidos.
+- [x] Item deixa de aparecer no historico.
+- [x] Falhas nao expõem detalhes internos.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 12. Fluxo Administrativo
 
