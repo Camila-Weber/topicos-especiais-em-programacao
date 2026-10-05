@@ -1,4 +1,4 @@
-import { BadGatewayException } from '@nestjs/common';
+import { BadGatewayException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { StorageService } from '../storage/storage.service';
 import { UploadedAudioFile } from '../storage/uploaded-audio-file';
@@ -22,7 +22,11 @@ describe('TranscriptionsService', () => {
     path: '/tmp/server-file.mp3',
   };
 
-  function createService({ providerFails = false, transcriptions = [] as Transcription[] } = {}) {
+  function createService({
+    providerFails = false,
+    transcriptions = [] as Transcription[],
+    detail = null as Transcription | null,
+  } = {}) {
     const repository = {
       create: jest.fn((data) => ({
         id: 'transcription-id',
@@ -31,6 +35,7 @@ describe('TranscriptionsService', () => {
       })),
       save: jest.fn(async (entity) => entity),
       find: jest.fn().mockResolvedValue(transcriptions),
+      findOne: jest.fn().mockResolvedValue(detail),
     } as unknown as Repository<Transcription>;
     const storageService = {
       saveAudio: jest.fn().mockResolvedValue(storedFile),
@@ -130,5 +135,50 @@ describe('TranscriptionsService', () => {
       },
     ]);
     expect('storedFileName' in result[0]).toBe(false);
+  });
+
+  it('returns detail for an authenticated owner without exposing storedFileName', async () => {
+    const transcription = {
+      id: 'transcription-id',
+      userId: 'user-id',
+      originalFileName: 'reuniao.mp3',
+      storedFileName: 'server-file.mp3',
+      mimeType: 'audio/mpeg',
+      fileExtension: 'mp3',
+      fileSize: 10,
+      language: 'pt',
+      text: 'Texto completo.',
+      createdAt: new Date('2026-10-04T20:00:00.000Z'),
+    } as Transcription;
+    const { service, repository } = createService({
+      detail: transcription,
+    });
+
+    const result = await service.findOneForUser('user-id', 'transcription-id');
+
+    expect(repository.findOne).toHaveBeenCalledWith({
+      where: {
+        id: 'transcription-id',
+        userId: 'user-id',
+      },
+    });
+    expect(result).toMatchObject({
+      id: 'transcription-id',
+      originalFileName: 'reuniao.mp3',
+      text: 'Texto completo.',
+      audio: {
+        streamUrl: '/api/transcriptions/transcription-id/audio',
+        downloadUrl: '/api/transcriptions/transcription-id/audio/download',
+      },
+    });
+    expect('storedFileName' in result).toBe(false);
+  });
+
+  it('returns 404 when detail does not exist or belongs to another user', async () => {
+    const { service } = createService();
+
+    await expect(service.findOneForUser('user-id', 'missing-id')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 });

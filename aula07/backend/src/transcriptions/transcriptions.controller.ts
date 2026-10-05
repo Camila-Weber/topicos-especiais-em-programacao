@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthenticatedUser } from '../auth/authenticated-user';
 import { CurrentUser } from '../auth/current-user.decorator';
@@ -16,6 +16,13 @@ export class TranscriptionsController {
   async list(@CurrentUser() user: AuthenticatedUser) {
     return {
       data: await this.transcriptionsService.listByUser(user.sub),
+    };
+  }
+
+  @Get(':id')
+  async findOne(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string) {
+    return {
+      data: await this.transcriptionsService.findOneForUser(user.sub, id),
     };
   }
 

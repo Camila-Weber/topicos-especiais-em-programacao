@@ -183,16 +183,24 @@ Validacao:
 
 Subetapas:
 
-- [ ] Implementar `GET /api/transcriptions/:id`.
-- [ ] Criar `/app/transcricoes/:id`.
-- [ ] Exibir texto, player, download e exclusao.
+- [x] Implementar `GET /api/transcriptions/:id`.
+- [x] Criar `/app/transcricoes/:id`.
+- [x] Exibir texto, player, download e exclusao.
 
 Criterios de aceite:
 
-- [ ] Detalhe exige JWT.
-- [ ] Recurso alheio retorna `404`.
-- [ ] Texto completo e exibido.
-- [ ] Caminho fisico nao e exibido.
+- [x] Detalhe exige JWT.
+- [x] Recurso alheio retorna `404`.
+- [x] Texto completo e exibido.
+- [x] Caminho fisico nao e exibido.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Player, download e exclusao estao visiveis como controles desativados ate as etapas 9, 10 e 11.
+- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 9. Fluxo de Reproducao do Audio
 

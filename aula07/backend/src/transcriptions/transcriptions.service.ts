@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StorageService } from '../storage/storage.service';
@@ -52,5 +52,24 @@ export class TranscriptionsService {
     });
 
     return transcriptions.map(toTranscriptionListItem);
+  }
+
+  async findOneForUser(userId: string, id: string) {
+    const transcription = await this.transcriptionsRepository.findOne({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!transcription) {
+      throw new NotFoundException({
+        statusCode: 404,
+        code: 'TRANSCRIPTION_NOT_FOUND',
+        message: 'Transcricao nao encontrada.',
+      });
+    }
+
+    return toTranscriptionResponse(transcription);
   }
 }

@@ -10,6 +10,7 @@ import {
   LogIn,
   LogOut,
   ShieldCheck,
+  Trash2,
   UserPlus,
   X,
 } from 'lucide-react';
@@ -22,6 +23,7 @@ import {
   Routes,
   useLocation,
   useNavigate,
+  useParams,
 } from 'react-router-dom';
 import { api } from './services/api';
 import { useAuthStore } from './stores/auth-store';
@@ -653,6 +655,122 @@ function HistoryPage() {
   );
 }
 
+function TranscriptionDetailPage() {
+  const { id } = useParams();
+  const [detail, setDetail] = useState<TranscriptionResult | null>(null);
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [message, setMessage] = useState('Carregando transcricao...');
+
+  useEffect(() => {
+    let active = true;
+
+    if (!id) {
+      setStatus('error');
+      setMessage('Transcricao nao encontrada.');
+      return;
+    }
+
+    api
+      .get<{ data: TranscriptionResult }>(`/transcriptions/${id}`)
+      .then((response) => {
+        if (!active) {
+          return;
+        }
+
+        setDetail(response.data.data);
+        setStatus('success');
+        setMessage('');
+      })
+      .catch((error) => {
+        if (!active) {
+          return;
+        }
+
+        setStatus('error');
+        setMessage(getApiMessage(error) || 'Transcricao nao encontrada.');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  return (
+    <PrivateLayout>
+      <section className="detail-panel">
+        <div className="history-header">
+          <div>
+            <p className="eyebrow">Detalhe</p>
+            <h1>{detail?.originalFileName ?? 'Transcricao'}</h1>
+            <p className="lead">
+              Confira o texto completo e os metadados do audio enviado.
+            </p>
+          </div>
+          <Link className="button button-secondary" to="/app/historico">
+            Voltar ao historico
+          </Link>
+        </div>
+
+        {status === 'loading' || status === 'error' ? (
+          <p className={`history-state ${status === 'error' ? 'error-text' : ''}`}>{message}</p>
+        ) : null}
+
+        {detail ? (
+          <div className="detail-grid">
+            <aside className="detail-card">
+              <FileAudio aria-hidden="true" />
+              <h2>Audio</h2>
+              <dl className="file-summary">
+                <div>
+                  <dt>Arquivo</dt>
+                  <dd>{detail.originalFileName}</dd>
+                </div>
+                <div>
+                  <dt>Data</dt>
+                  <dd>{formatDate(detail.createdAt)}</dd>
+                </div>
+                <div>
+                  <dt>Tamanho</dt>
+                  <dd>{formatBytes(detail.fileSize)}</dd>
+                </div>
+                <div>
+                  <dt>Idioma</dt>
+                  <dd>{detail.language}</dd>
+                </div>
+                <div>
+                  <dt>MIME</dt>
+                  <dd>{detail.mimeType}</dd>
+                </div>
+              </dl>
+
+              <div className="detail-actions">
+                <button className="button button-secondary" disabled type="button">
+                  <FileAudio aria-hidden="true" />
+                  Player na etapa 9
+                </button>
+                <button className="button button-secondary" disabled type="button">
+                  <Download aria-hidden="true" />
+                  Download na etapa 10
+                </button>
+                <button className="button button-secondary danger" disabled type="button">
+                  <Trash2 aria-hidden="true" />
+                  Excluir na etapa 11
+                </button>
+              </div>
+            </aside>
+
+            <article className="detail-card text-card">
+              <FileText aria-hidden="true" />
+              <h2>Texto completo</h2>
+              <textarea readOnly value={detail.text} />
+            </article>
+          </div>
+        ) : null}
+      </section>
+    </PrivateLayout>
+  );
+}
+
 function formatBytes(bytes: number) {
   if (bytes < 1024) {
     return `${bytes} B`;
@@ -706,12 +824,7 @@ export function App() {
         />
         <Route
           path="/app/transcricoes/:id"
-          element={
-            <PrivatePlaceholder
-              title="Detalhe da transcricao"
-              description="Texto completo, player, download e exclusao entram nas proximas etapas do fluxo."
-            />
-          }
+          element={<TranscriptionDetailPage />}
         />
         <Route
           path="/app/admin/usuarios"
