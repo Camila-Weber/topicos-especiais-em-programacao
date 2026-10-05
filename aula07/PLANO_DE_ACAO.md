@@ -296,14 +296,23 @@ Validacao:
 
 Criterios de aceite:
 
-- [ ] JWT expira em 5 minutos.
-- [ ] Nao existe refresh token.
-- [ ] `.env` nao esta versionado.
-- [ ] Frontend nao contem `GROQ_API_KEY`.
-- [ ] Groq nunca e chamada pelo navegador.
-- [ ] Audio nao fica em pasta publica.
-- [ ] Recursos alheios retornam `404`.
-- [ ] Erros nao retornam stack trace.
+- [x] JWT expira em 5 minutos.
+- [x] Nao existe refresh token.
+- [x] `.env` nao esta versionado.
+- [x] Frontend nao contem `GROQ_API_KEY`.
+- [x] Groq nunca e chamada pelo navegador.
+- [x] Audio nao fica em pasta publica.
+- [x] Recursos alheios retornam `404`.
+- [x] Erros nao retornam stack trace.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [x] Busca no codigo-fonte confirmou ausencia de `GROQ_API_KEY` no frontend.
+- [x] Filtro global de excecoes adicionado para nao retornar stack trace.
+- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 14. Testes de Aceite Final
 
