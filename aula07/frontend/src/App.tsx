@@ -46,6 +46,29 @@ function PublicHeader() {
 }
 
 function LandingPage() {
+  const [apiStatus, setApiStatus] = useState('Verificando API...');
+
+  useEffect(() => {
+    let active = true;
+
+    api
+      .get<{ data: { status: string } }>('/health')
+      .then((response) => {
+        if (active) {
+          setApiStatus(response.data.data.status === 'ok' ? 'API conectada' : 'API indisponivel');
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setApiStatus('API indisponivel');
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <main className="page-shell">
       <PublicHeader />
@@ -91,6 +114,7 @@ function LandingPage() {
             <span>4</span>
             <p>Baixe o audio original quando precisar.</p>
           </div>
+          <p className="api-status">{apiStatus}</p>
         </div>
       </section>
     </main>

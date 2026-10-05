@@ -187,6 +187,13 @@ h1 {
   line-height: 1.45;
 }
 
+.api-status {
+  margin: 2px 0 0;
+  color: #52606b;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
 .auth-shell,
 .private-shell {
   min-height: 100vh;

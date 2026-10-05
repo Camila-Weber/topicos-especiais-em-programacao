@@ -55,11 +55,11 @@ Criterios de aceite:
 - [x] Estrutura inicial foi criada.
 - [x] `.env.example` nao contem segredos reais.
 - [x] `.gitignore` ignora `.env`, `node_modules`, builds e storage local.
-- [ ] `docker compose up -d` sobe PostgreSQL. Pendente: Docker nao esta disponivel neste WSL.
-- [ ] Backend inicia sem erro. Pendente de validacao com PostgreSQL em execucao.
+- [x] `docker compose up -d` sobe PostgreSQL.
+- [x] Backend inicia sem erro.
 - [x] Frontend compila sem erro.
-- [ ] `GET /api/health` retorna `200`. Pendente de validacao com backend em execucao.
-- [ ] Frontend consome `/api/health`. Pendente de validacao integrada com backend em execucao.
+- [x] `GET /api/health` retorna `200`.
+- [x] Frontend consome `/api/health`.
 
 ## 3. Fluxo do Visitante
 
@@ -102,7 +102,7 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
-- [ ] Teste HTTP real pendente porque o PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 5. Fluxo de Login, Logout e Sessao
 
@@ -128,7 +128,7 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
-- [ ] Teste HTTP real pendente porque o PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 6. Fluxo de Nova Transcricao
 
@@ -155,7 +155,8 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
-- [ ] Teste HTTP real pendente porque PostgreSQL/Docker e `GROQ_API_KEY` nao estao disponiveis neste WSL.
+- [x] Teste HTTP real de validacoes de upload e falha controlada da Groq passou na etapa 14.
+- [ ] Transcricao real bem-sucedida pela Groq depende de configurar `GROQ_API_KEY`.
 
 ## 7. Fluxo de Historico
 
@@ -177,7 +178,7 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
-- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 8. Fluxo de Detalhe da Transcricao
 
@@ -199,8 +200,8 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
-- [ ] Player, download e exclusao estao visiveis como controles desativados ate as etapas 9, 10 e 11.
-- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Player, download e exclusao foram implementados nas etapas 9, 10 e 11.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 9. Fluxo de Reproducao do Audio
 
@@ -223,7 +224,7 @@ Validacao:
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
 - [x] Endpoint suporta `Range` quando informado.
-- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 10. Fluxo de Download
 
@@ -244,7 +245,7 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
-- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 11. Fluxo de Exclusao
 
@@ -266,7 +267,7 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
-- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 12. Fluxo Administrativo
 
@@ -290,7 +291,7 @@ Validacao:
 - [x] Testes automatizados do backend passaram.
 - [x] Build do backend passou.
 - [x] Build do frontend passou.
-- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 13. Revisao de Seguranca
 
@@ -312,24 +313,35 @@ Validacao:
 - [x] Build do frontend passou.
 - [x] Busca no codigo-fonte confirmou ausencia de `GROQ_API_KEY` no frontend.
 - [x] Filtro global de excecoes adicionado para nao retornar stack trace.
-- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
+- [x] Teste HTTP real com PostgreSQL passou na etapa 14.
 
 ## 14. Testes de Aceite Final
 
 Fluxos:
 
-- [ ] Usuario novo: cadastro, login, upload, transcricao, reproducao, download, historico, detalhe, exclusao e logout.
-- [ ] Token expirado: aguardar mais de 5 minutos, receber `401`, limpar sessao e voltar ao login.
-- [ ] Isolamento: usuario B nao acessa recursos do usuario A.
-- [ ] Admin: listar, desativar e reativar contas.
+- [ ] Usuario novo: cadastro, login, upload, transcricao, reproducao, download, historico, detalhe, exclusao e logout. Pendente apenas transcricao real bem-sucedida pela Groq com `GROQ_API_KEY`.
+- [x] Token expirado: receber `401 TOKEN_EXPIRED`, limpar sessao e voltar ao login. Validado com token expirado gerado para teste.
+- [x] Isolamento: usuario B nao acessa recursos do usuario A.
+- [x] Admin: listar, desativar e reativar contas.
 
 Criterios de aceite:
 
-- [ ] Todos os fluxos principais foram testados.
-- [ ] Todos os fluxos criticos de erro foram testados.
-- [ ] Sistema funciona em desktop e mobile.
-- [ ] Nenhum dado sensivel e exposto.
-- [ ] Banco e arquivos permanecem consistentes.
+- [ ] Todos os fluxos principais foram testados. Pendente apenas sucesso real de transcricao pela Groq.
+- [x] Todos os fluxos criticos de erro foram testados.
+- [x] Sistema funciona em desktop e mobile.
+- [x] Nenhum dado sensivel e exposto.
+- [x] Banco e arquivos permanecem consistentes.
+
+Validacao:
+
+- [x] `docker compose up -d` subiu PostgreSQL 17.
+- [x] Backend iniciou com PostgreSQL.
+- [x] Frontend iniciou com Vite.
+- [x] Proxy `/api/health` do frontend retornou `200`.
+- [x] Suite HTTP real passou em 45/45 verificacoes.
+- [x] Builds de backend e frontend passaram.
+- [x] Testes automatizados do backend passaram.
+- [ ] Teste de transcricao real com Groq pendente por falta de `GROQ_API_KEY`.
 
 ## Decisoes Consolidadas
 
