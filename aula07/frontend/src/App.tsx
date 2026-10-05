@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  Check,
   Download,
   FileAudio,
   History,
@@ -7,8 +8,11 @@ import {
   LogIn,
   ShieldCheck,
   UserPlus,
+  X,
 } from 'lucide-react';
+import { FormEvent, useMemo, useState } from 'react';
 import { Link, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
+import { api } from './services/api';
 
 const authStorageKey = 'ditado.auth';
 
@@ -85,19 +89,169 @@ function LandingPage() {
   );
 }
 
-function AuthPlaceholder({ mode }: { mode: 'register' | 'login' }) {
-  const isRegister = mode === 'register';
+function checkPassword(password: string) {
+  return {
+    minLength: password.length >= 8,
+    hasLetter: /[A-Za-zÀ-ÿ]/.test(password),
+    hasNumber: /\d/.test(password),
+    hasSpecial: /[^A-Za-zÀ-ÿ0-9]/.test(password),
+  };
+}
+
+function getApiMessage(error: unknown) {
+  if (typeof error === 'object' && error !== null && 'response' in error) {
+    const response = (error as { response?: { data?: { message?: string } } }).response;
+    return response?.data?.message;
+  }
+
+  return undefined;
+}
+
+function RegisterPage() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+  const passwordChecks = useMemo(() => checkPassword(password), [password]);
+  const passwordIsValid = Object.values(passwordChecks).every(Boolean);
+  const passwordsMatch = password.length > 0 && password === confirmPassword;
+  const canSubmit =
+    name.trim().length > 0 &&
+    email.trim().length > 0 &&
+    passwordIsValid &&
+    passwordsMatch &&
+    status !== 'loading';
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!canSubmit) {
+      return;
+    }
+
+    setStatus('loading');
+    setMessage('');
+
+    try {
+      await api.post('/auth/register', {
+        name,
+        email,
+        password,
+      });
+      setStatus('success');
+      setMessage('Conta criada com sucesso. Agora voce pode entrar.');
+      setName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      setStatus('error');
+      setMessage(getApiMessage(error) || 'Nao foi possivel criar a conta. Confira os dados.');
+    }
+  }
 
   return (
     <main className="page-shell auth-shell">
       <PublicHeader />
       <section className="auth-panel">
-        <p className="eyebrow">{isRegister ? 'Cadastro' : 'Login'}</p>
-        <h1>{isRegister ? 'Crie sua conta no Ditado.' : 'Entre no Ditado.'}</h1>
+        <p className="eyebrow">Cadastro</p>
+        <h1>Crie sua conta no Ditado.</h1>
         <p className="lead">
-          {isRegister
-            ? 'Esta tela publica esta preparada para receber o formulario completo na etapa de cadastro.'
-            : 'Esta tela publica esta preparada para receber a autenticacao completa na etapa de login.'}
+          Use uma senha forte para proteger seus audios e transcricoes privadas.
+        </p>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label>
+            Nome
+            <input
+              autoComplete="name"
+              name="name"
+              onChange={(event) => setName(event.target.value)}
+              required
+              type="text"
+              value={name}
+            />
+          </label>
+
+          <label>
+            E-mail
+            <input
+              autoComplete="email"
+              name="email"
+              onChange={(event) => setEmail(event.target.value)}
+              required
+              type="email"
+              value={email}
+            />
+          </label>
+
+          <label>
+            Senha
+            <input
+              autoComplete="new-password"
+              name="password"
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+          </label>
+
+          <ul className="password-checklist" aria-label="Criterios da senha">
+            <PasswordCheck checked={passwordChecks.minLength} text="8 ou mais caracteres" />
+            <PasswordCheck checked={passwordChecks.hasLetter} text="contem letra" />
+            <PasswordCheck checked={passwordChecks.hasNumber} text="contem numero" />
+            <PasswordCheck checked={passwordChecks.hasSpecial} text="contem caractere especial" />
+          </ul>
+
+          <label>
+            Confirmar senha
+            <input
+              autoComplete="new-password"
+              name="confirmPassword"
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              required
+              type="password"
+              value={confirmPassword}
+            />
+          </label>
+
+          {confirmPassword && !passwordsMatch ? (
+            <p className="form-hint error-text">As senhas precisam ser iguais.</p>
+          ) : null}
+
+          {message ? <p className={`form-message ${status}`}>{message}</p> : null}
+
+          <button className="button button-primary" disabled={!canSubmit} type="submit">
+            <UserPlus aria-hidden="true" />
+            {status === 'loading' ? 'Criando conta...' : 'Criar conta'}
+          </button>
+        </form>
+      </section>
+    </main>
+  );
+}
+
+function PasswordCheck({ checked, text }: { checked: boolean; text: string }) {
+  return (
+    <li className={checked ? 'valid' : ''}>
+      {checked ? <Check aria-hidden="true" /> : <X aria-hidden="true" />}
+      {text}
+    </li>
+  );
+}
+
+function LoginPlaceholder() {
+  return (
+    <main className="page-shell auth-shell">
+      <PublicHeader />
+      <section className="auth-panel">
+        <p className="eyebrow">Login</p>
+        <h1>Entre no Ditado.</h1>
+        <p className="lead">
+          Esta tela publica esta preparada para receber a autenticacao completa na etapa de login.
         </p>
         <Link className="button button-secondary" to="/">
           Voltar para a apresentacao
@@ -150,8 +304,8 @@ export function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/cadastro" element={<AuthPlaceholder mode="register" />} />
-      <Route path="/entrar" element={<AuthPlaceholder mode="login" />} />
+      <Route path="/cadastro" element={<RegisterPage />} />
+      <Route path="/entrar" element={<LoginPlaceholder />} />
 
       <Route element={<PrivateRoute />}>
         <Route

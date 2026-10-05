@@ -197,6 +197,84 @@ h1 {
   margin-top: 24px;
 }
 
+.auth-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  color: #2c3a42;
+  font-weight: 800;
+}
+
+.auth-form input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #c9d5d8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172026;
+}
+
+.auth-form input:focus {
+  border-color: #0f766e;
+  outline: 3px solid rgba(15, 118, 110, 0.16);
+}
+
+.auth-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.password-checklist {
+  display: grid;
+  gap: 8px;
+  margin: -2px 0 0;
+  padding: 0;
+  color: #6a7780;
+  list-style: none;
+}
+
+.password-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+}
+
+.password-checklist svg {
+  width: 16px;
+  height: 16px;
+  color: #9b2c2c;
+}
+
+.password-checklist li.valid {
+  color: #0f766e;
+}
+
+.password-checklist li.valid svg {
+  color: #0f766e;
+}
+
+.form-hint,
+.form-message {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.error-text,
+.form-message.error {
+  color: #9b2c2c;
+}
+
+.form-message.success {
+  color: #0f766e;
+}
+
 .private-panel svg {
   width: 36px;
   height: 36px;

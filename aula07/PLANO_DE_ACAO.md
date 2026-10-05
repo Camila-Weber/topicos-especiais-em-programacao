@@ -80,22 +80,29 @@ Criterios de aceite:
 
 Subetapas:
 
-- [ ] Criar entidade `User`.
-- [ ] Implementar `POST /api/auth/register`.
-- [ ] Validar nome, e-mail e senha.
-- [ ] Normalizar e-mail.
-- [ ] Persistir `passwordHash`.
-- [ ] Criar formulario com checklist de senha.
+- [x] Criar entidade `User`.
+- [x] Implementar `POST /api/auth/register`.
+- [x] Validar nome, e-mail e senha.
+- [x] Normalizar e-mail.
+- [x] Persistir `passwordHash`.
+- [x] Criar formulario com checklist de senha.
 
 Criterios de aceite:
 
-- [ ] Nome ausente retorna erro.
-- [ ] E-mail invalido retorna erro.
-- [ ] E-mail duplicado retorna `409 EMAIL_ALREADY_EXISTS`.
-- [ ] Senha fraca retorna `400 WEAK_PASSWORD`.
-- [ ] `role` e `active` enviados pelo cliente sao rejeitados.
-- [ ] Usuario criado recebe `role = user` e `active = true`.
-- [ ] `passwordHash` nunca aparece em JSON.
+- [x] Nome ausente retorna erro.
+- [x] E-mail invalido retorna erro.
+- [x] E-mail duplicado retorna `409 EMAIL_ALREADY_EXISTS`.
+- [x] Senha fraca retorna `400 WEAK_PASSWORD`.
+- [x] `role` e `active` enviados pelo cliente sao rejeitados.
+- [x] Usuario criado recebe `role = user` e `active = true`.
+- [x] `passwordHash` nunca aparece em JSON.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Teste HTTP real pendente porque o PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 5. Fluxo de Login, Logout e Sessao
 
