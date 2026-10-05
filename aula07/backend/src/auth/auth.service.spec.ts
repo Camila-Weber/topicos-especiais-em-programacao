@@ -1,21 +1,43 @@
-import { ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { hash } from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { UserRole } from '../users/user-role.enum';
 import { User } from '../users/user.entity';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
-  function createService(overrides: Partial<Repository<User>> = {}) {
+  function createService({
+    existingUser = null,
+    loginUser = null,
+  }: {
+    existingUser?: Partial<User> | null;
+    loginUser?: Partial<User> | null;
+  } = {}) {
+    const queryBuilder = {
+      addSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      getOne: jest.fn().mockResolvedValue(loginUser),
+    };
     const repository = {
-      findOne: jest.fn().mockResolvedValue(null),
+      findOne: jest.fn().mockResolvedValue(existingUser),
       create: jest.fn((data) => ({ id: 'user-id', ...data })),
       save: jest.fn(async (user) => user),
-      ...overrides,
+      createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
     } as unknown as Repository<User>;
+    const jwtService = {
+      signAsync: jest.fn().mockResolvedValue('jwt-token'),
+    } as unknown as JwtService;
 
     return {
-      service: new AuthService(repository),
+      service: new AuthService(repository, jwtService),
       repository,
+      jwtService,
     };
   }
 
@@ -60,7 +82,7 @@ describe('AuthService', () => {
 
   it('rejects duplicated email with EMAIL_ALREADY_EXISTS', async () => {
     const { service } = createService({
-      findOne: jest.fn().mockResolvedValue({ id: 'existing-user' }),
+      existingUser: { id: 'existing-user' },
     });
 
     await expect(
@@ -70,5 +92,70 @@ describe('AuthService', () => {
         password: 'Ditado@2026',
       }),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('returns user and JWT when login is valid', async () => {
+    const { service, jwtService } = createService({
+      loginUser: {
+        id: 'user-id',
+        name: 'Ana Souza',
+        email: 'ana@email.com',
+        passwordHash: await hash('Ditado@2026', 4),
+        role: UserRole.User,
+        active: true,
+      },
+    });
+
+    const result = await service.login({
+      email: 'ana@email.com',
+      password: 'Ditado@2026',
+    });
+
+    expect(jwtService.signAsync).toHaveBeenCalledWith({
+      sub: 'user-id',
+      role: UserRole.User,
+    });
+    expect(result).toEqual({
+      user: {
+        id: 'user-id',
+        name: 'Ana Souza',
+        email: 'ana@email.com',
+        role: UserRole.User,
+        active: true,
+      },
+      accessToken: 'jwt-token',
+      expiresIn: 300,
+    });
+  });
+
+  it('rejects invalid credentials without revealing whether email exists', async () => {
+    const { service } = createService();
+
+    await expect(
+      service.login({
+        email: 'ana@email.com',
+        password: 'Ditado@2026',
+      }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
+  });
+
+  it('rejects inactive accounts', async () => {
+    const { service } = createService({
+      loginUser: {
+        id: 'user-id',
+        name: 'Ana Souza',
+        email: 'ana@email.com',
+        passwordHash: await hash('Ditado@2026', 4),
+        role: UserRole.User,
+        active: false,
+      },
+    });
+
+    await expect(
+      service.login({
+        email: 'ana@email.com',
+        password: 'Ditado@2026',
+      }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });

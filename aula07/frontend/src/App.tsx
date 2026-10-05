@@ -6,19 +6,23 @@ import {
   History,
   Lock,
   LogIn,
+  LogOut,
   ShieldCheck,
   UserPlus,
   X,
 } from 'lucide-react';
-import { FormEvent, useMemo, useState } from 'react';
-import { Link, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import {
+  Link,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { api } from './services/api';
-
-const authStorageKey = 'ditado.auth';
-
-function hasLocalSession() {
-  return Boolean(window.localStorage.getItem(authStorageKey));
-}
+import { useAuthStore } from './stores/auth-store';
 
 function PublicHeader() {
   return (
@@ -243,7 +247,65 @@ function PasswordCheck({ checked, text }: { checked: boolean; text: string }) {
   );
 }
 
-function LoginPlaceholder() {
+function LoginPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const setSession = useAuthStore((state) => state.setSession);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
+  const [message, setMessage] = useState('');
+  const canSubmit = email.trim().length > 0 && password.length > 0 && status !== 'loading';
+  const from = (location.state as { from?: string } | null)?.from ?? '/app';
+
+  useEffect(() => {
+    const sessionMessage = window.sessionStorage.getItem('ditado.sessionMessage');
+
+    if (sessionMessage) {
+      setMessage(sessionMessage);
+      setStatus('error');
+      window.sessionStorage.removeItem('ditado.sessionMessage');
+    }
+  }, []);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!canSubmit) {
+      return;
+    }
+
+    setStatus('loading');
+    setMessage('');
+
+    try {
+      const response = await api.post<{
+        data: {
+          user: {
+            id: string;
+            name: string;
+            email: string;
+            role: 'user' | 'admin';
+          };
+          accessToken: string;
+          expiresIn: number;
+        };
+      }>('/auth/login', {
+        email,
+        password,
+      });
+      setSession({
+        user: response.data.data.user,
+        accessToken: response.data.data.accessToken,
+      });
+      setStatus('success');
+      navigate(from, { replace: true });
+    } catch (error) {
+      setStatus('error');
+      setMessage(getApiMessage(error) || 'E-mail ou senha invalidos.');
+    }
+  }
+
   return (
     <main className="page-shell auth-shell">
       <PublicHeader />
@@ -251,11 +313,40 @@ function LoginPlaceholder() {
         <p className="eyebrow">Login</p>
         <h1>Entre no Ditado.</h1>
         <p className="lead">
-          Esta tela publica esta preparada para receber a autenticacao completa na etapa de login.
+          Acesse sua area privada para enviar audios e consultar transcricoes.
         </p>
-        <Link className="button button-secondary" to="/">
-          Voltar para a apresentacao
-        </Link>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label>
+            E-mail
+            <input
+              autoComplete="email"
+              name="email"
+              onChange={(event) => setEmail(event.target.value)}
+              required
+              type="email"
+              value={email}
+            />
+          </label>
+
+          <label>
+            Senha
+            <input
+              autoComplete="current-password"
+              name="password"
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+          </label>
+
+          {message ? <p className={`form-message ${status}`}>{message}</p> : null}
+
+          <button className="button button-primary" disabled={!canSubmit} type="submit">
+            <LogIn aria-hidden="true" />
+            {status === 'loading' ? 'Entrando...' : 'Entrar'}
+          </button>
+        </form>
       </section>
     </main>
   );
@@ -263,8 +354,9 @@ function LoginPlaceholder() {
 
 function PrivateRoute() {
   const location = useLocation();
+  const accessToken = useAuthStore((state) => state.accessToken);
 
-  if (!hasLocalSession()) {
+  if (!accessToken) {
     return <Navigate to="/entrar" replace state={{ from: location.pathname }} />;
   }
 
@@ -272,8 +364,29 @@ function PrivateRoute() {
 }
 
 function PrivatePlaceholder({ title, description }: { title: string; description: string }) {
+  const clearSession = useAuthStore((state) => state.clearSession);
+  const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    clearSession();
+    navigate('/entrar', { replace: true });
+  }
+
   return (
     <main className="page-shell private-shell">
+      <header className="site-header">
+        <Link className="brand" to="/">
+          Ditado
+        </Link>
+        <nav aria-label="Navegacao privada">
+          <span className="user-chip">{user?.name ?? 'Usuario'}</span>
+          <button className="button button-ghost" onClick={handleLogout} type="button">
+            <LogOut aria-hidden="true" />
+            Sair
+          </button>
+        </nav>
+      </header>
       <section className="private-panel">
         <Lock aria-hidden="true" />
         <p className="eyebrow">Area autenticada</p>
@@ -305,7 +418,7 @@ export function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/cadastro" element={<RegisterPage />} />
-      <Route path="/entrar" element={<LoginPlaceholder />} />
+      <Route path="/entrar" element={<LoginPage />} />
 
       <Route element={<PrivateRoute />}>
         <Route

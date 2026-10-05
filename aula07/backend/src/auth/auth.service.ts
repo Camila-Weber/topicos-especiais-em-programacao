@@ -1,10 +1,18 @@
-import { ConflictException, Injectable, BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { hash } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { UserRole } from '../users/user-role.enum';
 import { User } from '../users/user.entity';
 import { toPublicUser } from '../users/user-presenter';
+import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { validatePasswordPolicy } from './password-policy';
 
@@ -13,6 +21,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -41,7 +50,7 @@ export class AuthService {
       throw new ConflictException({
         statusCode: 409,
         code: 'EMAIL_ALREADY_EXISTS',
-        message: 'Ja existe uma conta cadastrada com este e-mail.',
+      message: 'Ja existe uma conta cadastrada com este e-mail.',
       });
     }
 
@@ -58,5 +67,66 @@ export class AuthService {
     return {
       user: toPublicUser(savedUser),
     };
+  }
+
+  async login(dto: LoginDto) {
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.email = :email', { email: dto.email })
+      .getOne();
+
+    if (!user) {
+      throw this.invalidCredentials();
+    }
+
+    const passwordMatches = await compare(dto.password, user.passwordHash);
+
+    if (!passwordMatches) {
+      throw this.invalidCredentials();
+    }
+
+    if (!user.active) {
+      throw new ForbiddenException({
+        statusCode: 403,
+        code: 'ACCOUNT_INACTIVE',
+        message: 'Esta conta esta desativada.',
+      });
+    }
+
+    return {
+      user: toPublicUser(user),
+      accessToken: await this.jwtService.signAsync({
+        sub: user.id,
+        role: user.role,
+      }),
+      expiresIn: 300,
+    };
+  }
+
+  async me(userId: string) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException({
+        statusCode: 401,
+        code: 'UNAUTHORIZED',
+        message: 'Usuario autenticado nao encontrado.',
+      });
+    }
+
+    return {
+      user: toPublicUser(user),
+    };
+  }
+
+  private invalidCredentials() {
+    return new UnauthorizedException({
+      statusCode: 401,
+      code: 'INVALID_CREDENTIALS',
+      message: 'E-mail ou senha invalidos.',
+    });
   }
 }

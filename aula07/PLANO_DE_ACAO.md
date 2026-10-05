@@ -108,20 +108,27 @@ Validacao:
 
 Subetapas:
 
-- [ ] Implementar `POST /api/auth/login`.
-- [ ] Bloquear conta inativa.
-- [ ] Emitir JWT de 5 minutos.
-- [ ] Implementar `GET /api/auth/me`.
-- [ ] Criar `authStore`, interceptor axios e logout.
+- [x] Implementar `POST /api/auth/login`.
+- [x] Bloquear conta inativa.
+- [x] Emitir JWT de 5 minutos.
+- [x] Implementar `GET /api/auth/me`.
+- [x] Criar `authStore`, interceptor axios e logout.
 
 Criterios de aceite:
 
-- [ ] Login correto retorna usuario e token.
-- [ ] Login incorreto retorna `401 INVALID_CREDENTIALS`.
-- [ ] Conta inativa retorna `403 ACCOUNT_INACTIVE`.
-- [ ] Token contem `sub` e `role`.
-- [ ] Token expira em cerca de 300 segundos.
-- [ ] Token expirado limpa sessao e redireciona para `/entrar`.
+- [x] Login correto retorna usuario e token.
+- [x] Login incorreto retorna `401 INVALID_CREDENTIALS`.
+- [x] Conta inativa retorna `403 ACCOUNT_INACTIVE`.
+- [x] Token contem `sub` e `role`.
+- [x] Token expira em cerca de 300 segundos.
+- [x] Token expirado limpa sessao e redireciona para `/entrar`.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Teste HTTP real pendente porque o PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 6. Fluxo de Nova Transcricao
 
