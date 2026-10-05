@@ -1,0 +1,10 @@
+.env
+*.env
+node_modules/
+dist/
+build/
+coverage/
+backend/storage/
+frontend/.vite/
+*.log
+.DS_Store
