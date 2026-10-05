@@ -272,18 +272,25 @@ Validacao:
 
 Subetapas:
 
-- [ ] Criar guard `admin`.
-- [ ] Implementar `GET /api/users`.
-- [ ] Implementar `PATCH /api/users/:id`.
-- [ ] Criar `/app/admin/usuarios`.
+- [x] Criar guard `admin`.
+- [x] Implementar `GET /api/users`.
+- [x] Implementar `PATCH /api/users/:id`.
+- [x] Criar `/app/admin/usuarios`.
 
 Criterios de aceite:
 
-- [ ] Admin lista usuarios.
-- [ ] Usuario comum recebe `403`.
-- [ ] `passwordHash` nunca e retornado.
-- [ ] Admin ativa/desativa conta.
-- [ ] Mudanca de `role` nao ocorre neste MVP.
+- [x] Admin lista usuarios.
+- [x] Usuario comum recebe `403`.
+- [x] `passwordHash` nunca e retornado.
+- [x] Admin ativa/desativa conta.
+- [x] Mudanca de `role` nao ocorre neste MVP.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 13. Revisao de Seguranca
 

@@ -432,6 +432,14 @@ type TranscriptionListItem = {
   createdAt: string;
 };
 
+type AdminUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: 'user' | 'admin';
+  active: boolean;
+};
+
 function NewTranscriptionPage() {
   const [file, setFile] = useState<File | null>(null);
   const [language, setLanguage] = useState('pt');
@@ -921,6 +929,122 @@ function TranscriptionDetailPage() {
   );
 }
 
+function AdminUsersPage() {
+  const currentUser = useAuthStore((state) => state.user);
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+  const [updatingId, setUpdatingId] = useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    if (currentUser?.role !== 'admin') {
+      setStatus('error');
+      setMessage('Voce nao possui permissao para acessar esta area.');
+      return;
+    }
+
+    setStatus('loading');
+    setMessage('Carregando usuarios...');
+
+    api
+      .get<{ data: AdminUser[] }>('/users')
+      .then((response) => {
+        if (!active) {
+          return;
+        }
+
+        setUsers(response.data.data);
+        setStatus('success');
+        setMessage('');
+      })
+      .catch((error) => {
+        if (!active) {
+          return;
+        }
+
+        setStatus('error');
+        setMessage(getApiMessage(error) || 'Nao foi possivel carregar usuarios.');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [currentUser?.role]);
+
+  async function handleStatusChange(user: AdminUser) {
+    setUpdatingId(user.id);
+    setMessage('');
+
+    try {
+      const response = await api.patch<{ data: AdminUser }>(`/users/${user.id}`, {
+        active: !user.active,
+      });
+      setUsers((currentUsers) =>
+        currentUsers.map((item) => (item.id === user.id ? response.data.data : item)),
+      );
+    } catch (error) {
+      setStatus('error');
+      setMessage(getApiMessage(error) || 'Nao foi possivel atualizar o usuario.');
+    } finally {
+      setUpdatingId('');
+    }
+  }
+
+  return (
+    <PrivateLayout>
+      <section className="history-panel">
+        <div className="history-header">
+          <div>
+            <p className="eyebrow">Administracao</p>
+            <h1>Usuarios cadastrados.</h1>
+            <p className="lead">Gerencie somente o status das contas nesta versao.</p>
+          </div>
+        </div>
+
+        {status === 'loading' || status === 'error' ? (
+          <p className={`history-state ${status === 'error' ? 'error-text' : ''}`}>{message}</p>
+        ) : null}
+
+        {status === 'success' ? (
+          <div className="admin-table" role="table" aria-label="Usuarios">
+            <div className="admin-row admin-head" role="row">
+              <span role="columnheader">Nome</span>
+              <span role="columnheader">E-mail</span>
+              <span role="columnheader">Papel</span>
+              <span role="columnheader">Status</span>
+              <span role="columnheader">Acao</span>
+            </div>
+            {users.map((user) => (
+              <div className="admin-row" key={user.id} role="row">
+                <span role="cell">{user.name}</span>
+                <span role="cell">{user.email}</span>
+                <span role="cell">{user.role}</span>
+                <span role="cell">{user.active ? 'Ativa' : 'Inativa'}</span>
+                <span role="cell">
+                  <button
+                    className="button button-secondary"
+                    disabled={updatingId === user.id}
+                    onClick={() => void handleStatusChange(user)}
+                    type="button"
+                  >
+                    {updatingId === user.id
+                      ? 'Atualizando...'
+                      : user.active
+                        ? 'Desativar'
+                        : 'Ativar'}
+                  </button>
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </section>
+    </PrivateLayout>
+  );
+}
+
 function formatBytes(bytes: number) {
   if (bytes < 1024) {
     return `${bytes} B`;
@@ -978,12 +1102,7 @@ export function App() {
         />
         <Route
           path="/app/admin/usuarios"
-          element={
-            <PrivatePlaceholder
-              title="Administracao de usuarios"
-              description="A area administrativa sera protegida por papel admin em etapa propria."
-            />
-          }
+          element={<AdminUsersPage />}
         />
       </Route>
 

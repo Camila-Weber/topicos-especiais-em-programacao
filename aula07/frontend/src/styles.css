@@ -490,6 +490,33 @@ h1 {
   line-height: 1.55;
 }
 
+.admin-table {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 0.6fr 0.7fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid #e4eaec;
+  border-radius: 8px;
+  background: #fbfcfc;
+}
+
+.admin-head {
+  background: #eef5f3;
+  color: #2c3a42;
+  font-weight: 900;
+}
+
+.admin-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 820px) {
   .page-shell {
     width: min(100% - 24px, 1160px);
@@ -568,5 +595,13 @@ h1 {
 
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .admin-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-head {
+    display: none;
   }
 }
