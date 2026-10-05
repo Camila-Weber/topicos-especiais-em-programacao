@@ -2,6 +2,7 @@ import {
   ArrowRight,
   Check,
   Download,
+  FileText,
   FileAudio,
   History,
   Lock,
@@ -11,7 +12,7 @@ import {
   UserPlus,
   X,
 } from 'lucide-react';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   Link,
   Navigate,
@@ -363,7 +364,7 @@ function PrivateRoute() {
   return <Outlet />;
 }
 
-function PrivatePlaceholder({ title, description }: { title: string; description: string }) {
+function PrivateLayout({ children }: { children: ReactNode }) {
   const clearSession = useAuthStore((state) => state.clearSession);
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
@@ -387,14 +388,189 @@ function PrivatePlaceholder({ title, description }: { title: string; description
           </button>
         </nav>
       </header>
+      {children}
+    </main>
+  );
+}
+
+function PrivatePlaceholder({ title, description }: { title: string; description: string }) {
+  return (
+    <PrivateLayout>
       <section className="private-panel">
         <Lock aria-hidden="true" />
         <p className="eyebrow">Area autenticada</p>
         <h1>{title}</h1>
         <p className="lead">{description}</p>
       </section>
-    </main>
+    </PrivateLayout>
   );
+}
+
+type TranscriptionResult = {
+  id: string;
+  originalFileName: string;
+  mimeType: string;
+  fileSize: number;
+  language: string;
+  text: string;
+  createdAt: string;
+  audio: {
+    streamUrl: string;
+    downloadUrl: string;
+  };
+};
+
+function NewTranscriptionPage() {
+  const [file, setFile] = useState<File | null>(null);
+  const [language, setLanguage] = useState('pt');
+  const [status, setStatus] = useState<'idle' | 'selected' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('Selecione um arquivo para comecar.');
+  const [result, setResult] = useState<TranscriptionResult | null>(null);
+  const audioPreviewUrl = useMemo(() => (file ? URL.createObjectURL(file) : ''), [file]);
+
+  useEffect(() => {
+    return () => {
+      if (audioPreviewUrl) {
+        URL.revokeObjectURL(audioPreviewUrl);
+      }
+    };
+  }, [audioPreviewUrl]);
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const selectedFile = event.target.files?.[0] ?? null;
+    setFile(selectedFile);
+    setResult(null);
+
+    if (selectedFile) {
+      setStatus('selected');
+      setMessage('Arquivo selecionado. Pronto para enviar.');
+    } else {
+      setStatus('idle');
+      setMessage('Selecione um arquivo para comecar.');
+    }
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!file) {
+      setStatus('error');
+      setMessage('Selecione um arquivo de audio.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('language', language);
+    setStatus('loading');
+    setMessage('Enviando e transcrevendo seu audio...');
+
+    try {
+      const response = await api.post<{ data: TranscriptionResult }>('/transcriptions', formData);
+      setResult(response.data.data);
+      setStatus('success');
+      setMessage('Transcricao concluida.');
+    } catch (error) {
+      setStatus('error');
+      setMessage(getApiMessage(error) || 'Nao foi possivel transcrever o audio agora.');
+    }
+  }
+
+  return (
+    <PrivateLayout>
+      <section className="transcription-layout">
+        <div className="upload-panel">
+          <p className="eyebrow">Nova transcricao</p>
+          <h1>Envie um audio para transcrever.</h1>
+          <p className="lead">
+            Formatos previstos: mp3, m4a, wav, ogg, webm, flac, mp4 e mpeg. Limite de 25 MB.
+          </p>
+
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <label>
+              Arquivo de audio
+              <input
+                accept="audio/*,video/mp4"
+                disabled={status === 'loading'}
+                onChange={handleFileChange}
+                type="file"
+              />
+            </label>
+
+            <label>
+              Idioma
+              <input
+                disabled={status === 'loading'}
+                maxLength={10}
+                onChange={(event) => setLanguage(event.target.value)}
+                value={language}
+              />
+            </label>
+
+            {file ? (
+              <dl className="file-summary">
+                <div>
+                  <dt>Nome</dt>
+                  <dd>{file.name}</dd>
+                </div>
+                <div>
+                  <dt>Tamanho</dt>
+                  <dd>{formatBytes(file.size)}</dd>
+                </div>
+                <div>
+                  <dt>Formato</dt>
+                  <dd>{file.type || 'nao informado'}</dd>
+                </div>
+              </dl>
+            ) : null}
+
+            <p className={`form-message ${status === 'error' ? 'error' : status === 'success' ? 'success' : ''}`}>
+              {message}
+            </p>
+
+            <button className="button button-primary" disabled={!file || status === 'loading'} type="submit">
+              <FileAudio aria-hidden="true" />
+              {status === 'loading' ? 'Transcrevendo...' : 'Enviar audio'}
+            </button>
+          </form>
+        </div>
+
+        <div className="result-panel">
+          <FileText aria-hidden="true" />
+          <h2>Resultado</h2>
+          {result ? (
+            <>
+              <p className="result-meta">
+                {result.originalFileName} · {formatBytes(result.fileSize)} · {result.language}
+              </p>
+              {audioPreviewUrl ? <audio controls src={audioPreviewUrl} /> : null}
+              <textarea readOnly value={result.text} />
+              <button className="button button-secondary" disabled type="button">
+                <Download aria-hidden="true" />
+                Download sera ativado na etapa 10
+              </button>
+            </>
+          ) : (
+            <p className="empty-result">
+              A transcricao aparecera aqui apos o envio do audio.
+            </p>
+          )}
+        </div>
+      </section>
+    </PrivateLayout>
+  );
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 function NotFoundPage() {
@@ -423,12 +599,7 @@ export function App() {
       <Route element={<PrivateRoute />}>
         <Route
           path="/app"
-          element={
-            <PrivatePlaceholder
-              title="Nova transcricao"
-              description="A tela de upload e transcricao sera implementada na etapa de nova transcricao."
-            />
-          }
+          element={<NewTranscriptionPage />}
         />
         <Route
           path="/app/historico"

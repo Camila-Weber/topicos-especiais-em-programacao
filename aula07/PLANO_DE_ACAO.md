@@ -134,21 +134,28 @@ Validacao:
 
 Subetapas:
 
-- [ ] Criar `StorageService`.
-- [ ] Criar entidade `Transcription`.
-- [ ] Criar provider Groq.
-- [ ] Implementar `POST /api/transcriptions`.
-- [ ] Criar tela `/app`.
+- [x] Criar `StorageService`.
+- [x] Criar entidade `Transcription`.
+- [x] Criar provider Groq.
+- [x] Implementar `POST /api/transcriptions`.
+- [x] Criar tela `/app`.
 
 Criterios de aceite:
 
-- [ ] Upload exige autenticacao.
-- [ ] Sem arquivo retorna `FILE_REQUIRED`.
-- [ ] Tipo invalido retorna `INVALID_AUDIO_TYPE`.
-- [ ] Arquivo maior que 25 MB retorna `FILE_TOO_LARGE`.
-- [ ] Arquivo valido e salvo em diretorio privado.
-- [ ] Groq e chamada somente pelo backend.
-- [ ] Falha antes da persistencia remove arquivo salvo.
+- [x] Upload exige autenticacao.
+- [x] Sem arquivo retorna `FILE_REQUIRED`.
+- [x] Tipo invalido retorna `INVALID_AUDIO_TYPE`.
+- [x] Arquivo maior que 25 MB retorna `FILE_TOO_LARGE`.
+- [x] Arquivo valido e salvo em diretorio privado.
+- [x] Groq e chamada somente pelo backend.
+- [x] Falha antes da persistencia remove arquivo salvo.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Teste HTTP real pendente porque PostgreSQL/Docker e `GROQ_API_KEY` nao estao disponiveis neste WSL.
 
 ## 7. Fluxo de Historico
 
