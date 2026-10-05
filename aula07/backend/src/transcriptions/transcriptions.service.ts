@@ -6,7 +6,7 @@ import { UploadedAudioFile } from '../storage/uploaded-audio-file';
 import { CreateTranscriptionDto } from './dto/create-transcription.dto';
 import { GroqTranscriptionProvider } from './groq-transcription.provider';
 import { Transcription } from './transcription.entity';
-import { toTranscriptionResponse } from './transcription-presenter';
+import { toTranscriptionListItem, toTranscriptionResponse } from './transcription-presenter';
 
 @Injectable()
 export class TranscriptionsService {
@@ -41,5 +41,16 @@ export class TranscriptionsService {
       await this.storageService.removeAudio(storedFile.storedFileName);
       throw error;
     }
+  }
+
+  async listByUser(userId: string) {
+    const transcriptions = await this.transcriptionsRepository.find({
+      where: { userId },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    return transcriptions.map(toTranscriptionListItem);
   }
 }

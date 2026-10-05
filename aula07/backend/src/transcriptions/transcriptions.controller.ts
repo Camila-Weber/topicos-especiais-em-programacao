@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthenticatedUser } from '../auth/authenticated-user';
 import { CurrentUser } from '../auth/current-user.decorator';
@@ -11,6 +11,13 @@ import { TranscriptionsService } from './transcriptions.service';
 @UseGuards(JwtAuthGuard)
 export class TranscriptionsController {
   constructor(private readonly transcriptionsService: TranscriptionsService) {}
+
+  @Get()
+  async list(@CurrentUser() user: AuthenticatedUser) {
+    return {
+      data: await this.transcriptionsService.listByUser(user.sub),
+    };
+  }
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))

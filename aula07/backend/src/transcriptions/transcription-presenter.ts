@@ -15,3 +15,24 @@ export function toTranscriptionResponse(transcription: Transcription) {
     },
   };
 }
+
+export function toTranscriptionListItem(transcription: Transcription) {
+  return {
+    id: transcription.id,
+    originalFileName: transcription.originalFileName,
+    fileSize: Number(transcription.fileSize),
+    language: transcription.language,
+    textPreview: createTextPreview(transcription.text),
+    createdAt: transcription.createdAt,
+  };
+}
+
+function createTextPreview(text: string) {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+
+  if (normalized.length <= 120) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, 117)}...`;
+}

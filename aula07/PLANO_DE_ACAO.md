@@ -161,16 +161,23 @@ Validacao:
 
 Subetapas:
 
-- [ ] Implementar `GET /api/transcriptions`.
-- [ ] Criar `/app/historico`.
-- [ ] Exibir lista, estado vazio e acesso ao detalhe.
+- [x] Implementar `GET /api/transcriptions`.
+- [x] Criar `/app/historico`.
+- [x] Exibir lista, estado vazio e acesso ao detalhe.
 
 Criterios de aceite:
 
-- [ ] Historico exige JWT.
-- [ ] Usuario ve somente suas transcricoes.
-- [ ] Lista vem em `createdAt DESC`.
-- [ ] `storedFileName` nao aparece na listagem.
+- [x] Historico exige JWT.
+- [x] Usuario ve somente suas transcricoes.
+- [x] Lista vem em `createdAt DESC`.
+- [x] `storedFileName` nao aparece na listagem.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Teste HTTP real pendente porque PostgreSQL/Docker nao esta disponivel neste WSL.
 
 ## 8. Fluxo de Detalhe da Transcricao
 

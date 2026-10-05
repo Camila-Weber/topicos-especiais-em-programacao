@@ -2,6 +2,7 @@ import {
   ArrowRight,
   Check,
   Download,
+  Eye,
   FileText,
   FileAudio,
   History,
@@ -420,6 +421,15 @@ type TranscriptionResult = {
   };
 };
 
+type TranscriptionListItem = {
+  id: string;
+  originalFileName: string;
+  fileSize: number;
+  language: string;
+  textPreview: string;
+  createdAt: string;
+};
+
 function NewTranscriptionPage() {
   const [file, setFile] = useState<File | null>(null);
   const [language, setLanguage] = useState('pt');
@@ -561,6 +571,88 @@ function NewTranscriptionPage() {
   );
 }
 
+function HistoryPage() {
+  const [items, setItems] = useState<TranscriptionListItem[]>([]);
+  const [status, setStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
+  const [message, setMessage] = useState('Carregando historico...');
+
+  useEffect(() => {
+    let active = true;
+
+    api
+      .get<{ data: TranscriptionListItem[] }>('/transcriptions')
+      .then((response) => {
+        if (!active) {
+          return;
+        }
+
+        setItems(response.data.data);
+
+        if (response.data.data.length === 0) {
+          setStatus('empty');
+          setMessage('Voce ainda nao possui transcricoes.');
+        } else {
+          setStatus('success');
+          setMessage('');
+        }
+      })
+      .catch((error) => {
+        if (!active) {
+          return;
+        }
+
+        setStatus('error');
+        setMessage(getApiMessage(error) || 'Nao foi possivel carregar o historico.');
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return (
+    <PrivateLayout>
+      <section className="history-panel">
+        <div className="history-header">
+          <div>
+            <p className="eyebrow">Historico</p>
+            <h1>Suas transcricoes.</h1>
+            <p className="lead">A lista mostra apenas audios enviados pela sua conta.</p>
+          </div>
+          <Link className="button button-primary" to="/app">
+            <FileAudio aria-hidden="true" />
+            Nova transcricao
+          </Link>
+        </div>
+
+        {status === 'loading' || status === 'empty' || status === 'error' ? (
+          <p className={`history-state ${status === 'error' ? 'error-text' : ''}`}>{message}</p>
+        ) : null}
+
+        {status === 'success' ? (
+          <div className="history-list">
+            {items.map((item) => (
+              <article className="history-item" key={item.id}>
+                <div>
+                  <h2>{item.originalFileName}</h2>
+                  <p>{item.textPreview || 'Sem previa disponivel.'}</p>
+                  <span>
+                    {formatDate(item.createdAt)} · {formatBytes(item.fileSize)} · {item.language}
+                  </span>
+                </div>
+                <Link className="button button-secondary" to={`/app/transcricoes/${item.id}`}>
+                  <Eye aria-hidden="true" />
+                  Visualizar
+                </Link>
+              </article>
+            ))}
+          </div>
+        ) : null}
+      </section>
+    </PrivateLayout>
+  );
+}
+
 function formatBytes(bytes: number) {
   if (bytes < 1024) {
     return `${bytes} B`;
@@ -571,6 +663,13 @@ function formatBytes(bytes: number) {
   }
 
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(new Date(value));
 }
 
 function NotFoundPage() {
@@ -603,12 +702,7 @@ export function App() {
         />
         <Route
           path="/app/historico"
-          element={
-            <PrivatePlaceholder
-              title="Historico"
-              description="A listagem privada de transcricoes sera implementada na etapa de historico."
-            />
-          }
+          element={<HistoryPage />}
         />
         <Route
           path="/app/transcricoes/:id"

@@ -22,7 +22,7 @@ describe('TranscriptionsService', () => {
     path: '/tmp/server-file.mp3',
   };
 
-  function createService({ providerFails = false } = {}) {
+  function createService({ providerFails = false, transcriptions = [] as Transcription[] } = {}) {
     const repository = {
       create: jest.fn((data) => ({
         id: 'transcription-id',
@@ -30,6 +30,7 @@ describe('TranscriptionsService', () => {
         ...data,
       })),
       save: jest.fn(async (entity) => entity),
+      find: jest.fn().mockResolvedValue(transcriptions),
     } as unknown as Repository<Transcription>;
     const storageService = {
       saveAudio: jest.fn().mockResolvedValue(storedFile),
@@ -93,5 +94,41 @@ describe('TranscriptionsService', () => {
     ).rejects.toBeInstanceOf(BadGatewayException);
     expect(storageService.removeAudio).toHaveBeenCalledWith('server-file.mp3');
     expect(repository.save).not.toHaveBeenCalled();
+  });
+
+  it('lists only authenticated user transcriptions ordered by newest first', async () => {
+    const transcription = {
+      id: 'transcription-id',
+      userId: 'user-id',
+      originalFileName: 'reuniao.mp3',
+      storedFileName: 'server-file.mp3',
+      mimeType: 'audio/mpeg',
+      fileExtension: 'mp3',
+      fileSize: 10,
+      language: 'pt',
+      text: 'Texto transcrito com muitas palavras para exibir uma previa no historico.',
+      createdAt: new Date('2026-10-04T20:00:00.000Z'),
+    } as Transcription;
+    const { service, repository } = createService({
+      transcriptions: [transcription],
+    });
+
+    const result = await service.listByUser('user-id');
+
+    expect(repository.find).toHaveBeenCalledWith({
+      where: { userId: 'user-id' },
+      order: { createdAt: 'DESC' },
+    });
+    expect(result).toEqual([
+      {
+        id: 'transcription-id',
+        originalFileName: 'reuniao.mp3',
+        fileSize: 10,
+        language: 'pt',
+        textPreview: 'Texto transcrito com muitas palavras para exibir uma previa no historico.',
+        createdAt: new Date('2026-10-04T20:00:00.000Z'),
+      },
+    ]);
+    expect('storedFileName' in result[0]).toBe(false);
   });
 });
