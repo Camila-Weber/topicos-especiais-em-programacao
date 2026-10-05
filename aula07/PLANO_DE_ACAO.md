@@ -65,16 +65,16 @@ Criterios de aceite:
 
 Subetapas:
 
-- [ ] Criar landing page `/`.
-- [ ] Criar rotas publicas `/cadastro` e `/entrar`.
-- [ ] Proteger `/app`, `/app/historico`, `/app/transcricoes/:id` e `/app/admin/usuarios`.
+- [x] Criar landing page `/`.
+- [x] Criar rotas publicas `/cadastro` e `/entrar`.
+- [x] Proteger `/app`, `/app/historico`, `/app/transcricoes/:id` e `/app/admin/usuarios`.
 
 Criterios de aceite:
 
-- [ ] Visitante acessa landing, cadastro e login.
-- [ ] Visitante sem token nao acessa area interna.
-- [ ] Tentativa de rota privada redireciona para `/entrar`.
-- [ ] Landing funciona em desktop e mobile.
+- [x] Visitante acessa landing, cadastro e login.
+- [x] Visitante sem token nao acessa area interna.
+- [x] Tentativa de rota privada redireciona para `/entrar`.
+- [x] Landing funciona em desktop e mobile.
 
 ## 4. Fluxo de Cadastro
 
