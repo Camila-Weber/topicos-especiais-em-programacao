@@ -1,4 +1,4 @@
-import { BadGatewayException, NotFoundException } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { StorageService } from '../storage/storage.service';
 import { UploadedAudioFile } from '../storage/uploaded-audio-file';
@@ -114,6 +114,18 @@ describe('TranscriptionsService', () => {
     ).rejects.toBeInstanceOf(BadGatewayException);
     expect(storageService.removeAudio).toHaveBeenCalledWith('server-file.mp3');
     expect(repository.save).not.toHaveBeenCalled();
+  });
+
+  it('rejects unsupported transcription languages before saving audio', async () => {
+    const { service, storageService, provider } = createService();
+
+    await expect(
+      service.create('user-id', uploadedFile, {
+        language: 'jp',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(storageService.saveAudio).not.toHaveBeenCalled();
+    expect(provider.transcribe).not.toHaveBeenCalled();
   });
 
   it('lists only authenticated user transcriptions ordered by newest first', async () => {

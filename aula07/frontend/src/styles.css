@@ -24,6 +24,7 @@ a {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -705,7 +706,19 @@ h1 {
   color: #172026;
 }
 
-.auth-form input:focus {
+.auth-form select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #c9d5d8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172026;
+  cursor: pointer;
+}
+
+.auth-form input:focus,
+.auth-form select:focus {
   border-color: #0f766e;
   outline: 3px solid rgba(15, 118, 110, 0.16);
 }
@@ -782,6 +795,63 @@ h1 {
   background: #ffffff;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.dropzone {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  min-height: 220px;
+  padding: 26px;
+  border: 2px dashed #b8c7cb;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(244, 211, 94, 0.12)),
+    #fbfcfc;
+  color: #52606b;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.dropzone:hover,
+.dropzone.dragging,
+.dropzone.has-file {
+  border-color: #0f766e;
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.13), rgba(244, 211, 94, 0.18)),
+    #ffffff;
+  box-shadow: 0 16px 34px rgba(18, 39, 45, 0.08);
+  transform: translateY(-2px);
+}
+
+.dropzone svg {
+  width: 44px;
+  height: 44px;
+  color: #0f766e;
+}
+
+.dropzone strong {
+  color: #172026;
+  font-size: 1.1rem;
+}
+
+.dropzone span {
+  max-width: 360px;
+  line-height: 1.5;
+}
+
 .file-summary {
   display: grid;
   gap: 10px;
@@ -807,6 +877,30 @@ h1 {
   min-width: 0;
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+.upload-guidance {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid #e4eaec;
+  border-radius: 8px;
+  background: #fbfcfc;
+}
+
+.upload-guidance div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #52606b;
+  line-height: 1.45;
+}
+
+.upload-guidance svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: #0f766e;
 }
 
 .result-panel > svg {
@@ -841,6 +935,12 @@ h1 {
   resize: vertical;
   color: #172026;
   line-height: 1.55;
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .history-panel {

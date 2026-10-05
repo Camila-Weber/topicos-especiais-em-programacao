@@ -379,6 +379,105 @@ Validacao:
 - [x] Build do frontend passou apos a implementacao.
 - [ ] Validacao visual manual no navegador.
 
+## 16. Nova Tela de Envio de Transcricao
+
+Objetivo:
+
+- [x] Redesenhar `/app` como tela dedicada de envio e resultado imediato.
+- [x] Separar o historico em `/app/historico`, sem misturar listagem na tela de envio.
+- [x] Adicionar campo de arrastar e soltar para audio/video.
+- [x] Trocar idioma livre por `select` com opcoes amigaveis.
+
+Subetapas:
+
+- [x] Registrar esta etapa no `PLANO_DE_ACAO.md`.
+- [x] Criar lista controlada de idiomas: Portugues, Ingles, Espanhol, Frances, Alemao e Italiano.
+- [x] Validar no backend que apenas `pt`, `en`, `es`, `fr`, `de` e `it` sao aceitos.
+- [x] Criar dropzone para arrastar/selecionar `audio/*` e `video/mp4`.
+- [x] Validar visualmente arquivo ausente, tipo invalido e tamanho acima de 25 MB.
+- [x] Exibir nome, tamanho, formato e idioma antes do envio.
+- [x] Mostrar estados de vazio, selecionado, carregando, sucesso e erro.
+- [x] Exibir resultado imediato com texto, player local, link para detalhe e link para historico.
+
+Criterios de aceite:
+
+- [x] Usuario consegue arrastar audio/video para a tela.
+- [x] Usuario consegue selecionar arquivo por clique.
+- [x] Usuario escolhe idioma apenas pelas opcoes do select.
+- [x] Select mostra nomes completos dos idiomas.
+- [x] Idioma invalido enviado manualmente para API retorna `400 INVALID_LANGUAGE`.
+- [x] Tela informa nome, tamanho, tipo e idioma antes de enviar.
+- [x] Envio sem arquivo e impedido.
+- [x] Arquivos invalidos exibem mensagem amigavel.
+- [x] Sucesso mostra texto transcrito e caminho para detalhe/historico.
+- [x] Historico nao aparece misturado na tela de envio.
+- [x] Build do frontend passa.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Validacao visual manual no navegador.
+
+## 17. Historico com Pesquisa Paginada
+
+Objetivo:
+
+- [ ] Evoluir `/app/historico` com busca, filtros e paginacao.
+- [ ] Manter abertura de detalhe em `/app/transcricoes/:id`.
+- [ ] Pedir autorizacao antes de iniciar esta etapa.
+
+Subetapas:
+
+- [ ] Alterar `GET /api/transcriptions` para aceitar `page`, `pageSize`, `q`, `language`, `dateFrom` e `dateTo`.
+- [ ] Retornar `data` e `meta` com dados de paginacao.
+- [ ] Filtrar sempre por usuario autenticado.
+- [ ] Buscar por nome original e texto transcrito.
+- [ ] Filtrar idioma por select com nomes completos.
+- [ ] Filtrar por intervalo de datas.
+- [ ] Atualizar frontend do historico com pesquisa, filtros, paginacao e estados de carregamento/vazio/erro.
+
+Criterios de aceite:
+
+- [ ] Historico exige JWT.
+- [ ] Pesquisa por texto encontra nome de arquivo e conteudo transcrito.
+- [ ] Filtro de idioma funciona com select.
+- [ ] Idioma invalido na query retorna `400 INVALID_LANGUAGE`.
+- [ ] Filtros de data funcionam.
+- [ ] Paginacao mostra total e navega corretamente.
+- [ ] Usuario ve apenas suas transcricoes.
+- [ ] Detalhe abre pela pagina existente.
+- [ ] Listagem nao expoe `storedFileName`.
+- [ ] Testes do backend e build do frontend passam.
+
+## 18. Validacao Integrada e Documentacao
+
+Objetivo:
+
+- [ ] Atualizar documentacao apos autorizacao e conclusao da etapa 17.
+- [ ] Validar o fluxo integrado de envio, historico, busca, detalhe e exclusao.
+- [ ] Pedir autorizacao antes de iniciar esta etapa.
+
+Subetapas:
+
+- [ ] Atualizar `README.md` com nova experiencia de envio.
+- [ ] Documentar idiomas disponiveis com nome completo e sigla enviada.
+- [ ] Documentar parametros de busca paginada.
+- [ ] Validar envio por clique e drag and drop.
+- [ ] Validar arquivo invalido e idioma invalido direto na API.
+- [ ] Validar busca, filtro de idioma, filtro de data e paginacao.
+- [ ] Validar abertura de detalhe, exclusao e atualizacao de lista.
+
+Criterios de aceite:
+
+- [ ] Plano atualizado.
+- [ ] README atualizado.
+- [ ] Testes automatizados do backend passam.
+- [ ] Build do backend passa.
+- [ ] Build do frontend passa.
+- [ ] Validacao manual do fluxo principal marcada no plano.
+
 ## Decisoes Consolidadas
 
 - O armazenamento de audio sera local e privado no backend.

@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StorageService } from '../storage/storage.service';
 import { UploadedAudioFile } from '../storage/uploaded-audio-file';
 import { CreateTranscriptionDto } from './dto/create-transcription.dto';
 import { GroqTranscriptionProvider } from './groq-transcription.provider';
+import { isAllowedTranscriptionLanguage } from './transcription-languages';
 import { Transcription } from './transcription.entity';
 import { toTranscriptionListItem, toTranscriptionResponse } from './transcription-presenter';
 
@@ -18,8 +19,8 @@ export class TranscriptionsService {
   ) {}
 
   async create(userId: string, file: UploadedAudioFile | undefined, dto: CreateTranscriptionDto) {
+    const language = normalizeLanguage(dto.language);
     const storedFile = await this.storageService.saveAudio(file);
-    const language = dto.language || 'pt';
 
     try {
       const text = await this.transcriptionProvider.transcribe(storedFile, language);
@@ -130,4 +131,18 @@ export class TranscriptionsService {
     await this.storageService.removeAudio(transcription.storedFileName);
     await this.transcriptionsRepository.remove(transcription);
   }
+}
+
+function normalizeLanguage(language: string | undefined) {
+  const normalizedLanguage = language || 'pt';
+
+  if (!isAllowedTranscriptionLanguage(normalizedLanguage)) {
+    throw new BadRequestException({
+      statusCode: 400,
+      code: 'INVALID_LANGUAGE',
+      message: 'Idioma nao suportado.',
+    });
+  }
+
+  return normalizedLanguage;
 }

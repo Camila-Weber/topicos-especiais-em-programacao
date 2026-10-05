@@ -22,7 +22,7 @@ import {
   UserPlus,
   X,
 } from 'lucide-react';
-import { ChangeEvent, FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, DragEvent, FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   Link,
   Navigate,
@@ -109,6 +109,31 @@ const productFlow = [
     icon: Trash2,
   },
 ];
+
+const transcriptionLanguages = [
+  { value: 'pt', label: 'Portugues' },
+  { value: 'en', label: 'Ingles' },
+  { value: 'es', label: 'Espanhol' },
+  { value: 'fr', label: 'Frances' },
+  { value: 'de', label: 'Alemao' },
+  { value: 'it', label: 'Italiano' },
+] as const;
+
+const maxUploadSizeBytes = 25 * 1024 * 1024;
+const allowedUploadExtensions = new Set(['mp3', 'm4a', 'wav', 'ogg', 'webm', 'flac', 'mp4', 'mpeg']);
+const allowedUploadMimeTypes = new Set([
+  'audio/mpeg',
+  'audio/mp3',
+  'audio/mp4',
+  'audio/m4a',
+  'audio/wav',
+  'audio/wave',
+  'audio/x-wav',
+  'audio/ogg',
+  'audio/webm',
+  'audio/flac',
+  'video/mp4',
+]);
 
 function LandingPage() {
   const [apiStatus, setApiStatus] = useState('Verificando API...');
@@ -721,9 +746,11 @@ function NewTranscriptionPage() {
   const [file, setFile] = useState<File | null>(null);
   const [language, setLanguage] = useState('pt');
   const [status, setStatus] = useState<'idle' | 'selected' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('Selecione um arquivo para comecar.');
+  const [message, setMessage] = useState('Arraste um audio ou video para comecar.');
   const [result, setResult] = useState<TranscriptionResult | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const audioPreviewUrl = useMemo(() => (file ? URL.createObjectURL(file) : ''), [file]);
+  const selectedLanguageLabel = getLanguageLabel(language);
 
   useEffect(() => {
     return () => {
@@ -733,18 +760,55 @@ function NewTranscriptionPage() {
     };
   }, [audioPreviewUrl]);
 
-  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const selectedFile = event.target.files?.[0] ?? null;
-    setFile(selectedFile);
+  function setSelectedFile(selectedFile: File | null) {
     setResult(null);
 
-    if (selectedFile) {
-      setStatus('selected');
-      setMessage('Arquivo selecionado. Pronto para enviar.');
-    } else {
+    if (!selectedFile) {
+      setFile(null);
       setStatus('idle');
-      setMessage('Selecione um arquivo para comecar.');
+      setMessage('Arraste um audio ou video para comecar.');
+      return;
     }
+
+    const validationMessage = validateUploadFile(selectedFile);
+
+    if (validationMessage) {
+      setFile(null);
+      setStatus('error');
+      setMessage(validationMessage);
+      return;
+    }
+
+    setFile(selectedFile);
+    setStatus('selected');
+    setMessage('Arquivo pronto para transcricao.');
+  }
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    setSelectedFile(event.target.files?.[0] ?? null);
+  }
+
+  function handleDragOver(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+
+    if (status !== 'loading') {
+      setIsDragging(true);
+    }
+  }
+
+  function handleDragLeave() {
+    setIsDragging(false);
+  }
+
+  function handleDrop(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    setIsDragging(false);
+
+    if (status === 'loading') {
+      return;
+    }
+
+    setSelectedFile(event.dataTransfer.files?.[0] ?? null);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -752,7 +816,7 @@ function NewTranscriptionPage() {
 
     if (!file) {
       setStatus('error');
-      setMessage('Selecione um arquivo de audio.');
+      setMessage('Selecione ou arraste um arquivo de audio/video.');
       return;
     }
 
@@ -778,30 +842,47 @@ function NewTranscriptionPage() {
       <section className="transcription-layout">
         <div className="upload-panel">
           <p className="eyebrow">Nova transcricao</p>
-          <h1>Envie um audio para transcrever.</h1>
+          <h1>Envie audio ou video para transcrever.</h1>
           <p className="lead">
-            Formatos previstos: mp3, m4a, wav, ogg, webm, flac, mp4 e mpeg. Limite de 25 MB.
+            Arraste o arquivo, escolha o idioma e acompanhe o resultado sem sair desta tela.
           </p>
 
           <form className="auth-form" onSubmit={handleSubmit}>
-            <label>
-              Arquivo de audio
+            <label
+              className={`dropzone ${isDragging ? 'dragging' : ''} ${file ? 'has-file' : ''}`}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            >
               <input
                 accept="audio/*,video/mp4"
+                className="visually-hidden"
                 disabled={status === 'loading'}
                 onChange={handleFileChange}
                 type="file"
               />
+              <UploadCloud aria-hidden="true" />
+              <strong>{file ? 'Arquivo selecionado' : 'Arraste seu arquivo aqui'}</strong>
+              <span>
+                {file
+                  ? 'Clique para trocar o arquivo antes de enviar.'
+                  : 'Ou clique para escolher um audio ou video MP4.'}
+              </span>
             </label>
 
             <label>
               Idioma
-              <input
+              <select
                 disabled={status === 'loading'}
-                maxLength={10}
                 onChange={(event) => setLanguage(event.target.value)}
                 value={language}
-              />
+              >
+                {transcriptionLanguages.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </label>
 
             {file ? (
@@ -818,8 +899,27 @@ function NewTranscriptionPage() {
                   <dt>Formato</dt>
                   <dd>{file.type || 'nao informado'}</dd>
                 </div>
+                <div>
+                  <dt>Idioma</dt>
+                  <dd>{selectedLanguageLabel}</dd>
+                </div>
               </dl>
             ) : null}
+
+            <div className="upload-guidance" aria-label="Orientacoes de envio">
+              <div>
+                <Check aria-hidden="true" />
+                <span>mp3, m4a, wav, ogg, webm, flac, mp4 ou mpeg</span>
+              </div>
+              <div>
+                <Check aria-hidden="true" />
+                <span>Limite de {formatBytes(maxUploadSizeBytes)}</span>
+              </div>
+              <div>
+                <Check aria-hidden="true" />
+                <span>Uma transcricao por envio</span>
+              </div>
+            </div>
 
             <p className={`form-message ${status === 'error' ? 'error' : status === 'success' ? 'success' : ''}`}>
               {message}
@@ -838,18 +938,25 @@ function NewTranscriptionPage() {
           {result ? (
             <>
               <p className="result-meta">
-                {result.originalFileName} · {formatBytes(result.fileSize)} · {result.language}
+                {result.originalFileName} · {formatBytes(result.fileSize)} · {getLanguageLabel(result.language)}
               </p>
               {audioPreviewUrl ? <audio controls src={audioPreviewUrl} /> : null}
               <textarea readOnly value={result.text} />
-              <button className="button button-secondary" disabled type="button">
-                <Download aria-hidden="true" />
-                Download sera ativado na etapa 10
-              </button>
+              <div className="result-actions">
+                <Link className="button button-primary" to={`/app/transcricoes/${result.id}`}>
+                  <Eye aria-hidden="true" />
+                  Abrir detalhe
+                </Link>
+                <Link className="button button-secondary" to="/app/historico">
+                  <History aria-hidden="true" />
+                  Ver historico
+                </Link>
+              </div>
             </>
           ) : (
             <p className="empty-result">
-              A transcricao aparecera aqui apos o envio do audio.
+              O texto transcrito, o player local e os atalhos para detalhe/historico aparecerao aqui
+              apos o envio.
             </p>
           )}
         </div>
@@ -1332,6 +1439,31 @@ function formatBytes(bytes: number) {
   }
 
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function getLanguageLabel(language: string) {
+  return transcriptionLanguages.find((option) => option.value === language)?.label ?? language;
+}
+
+function validateUploadFile(selectedFile: File) {
+  if (selectedFile.size > maxUploadSizeBytes) {
+    return `O arquivo precisa ter ate ${formatBytes(maxUploadSizeBytes)}.`;
+  }
+
+  const extension = getFileExtension(selectedFile.name);
+  const mimeType = selectedFile.type.toLowerCase();
+  const typeIsAllowed = mimeType ? allowedUploadMimeTypes.has(mimeType) : false;
+  const extensionIsAllowed = allowedUploadExtensions.has(extension);
+
+  if (!typeIsAllowed && !extensionIsAllowed) {
+    return 'Formato nao suportado. Use mp3, m4a, wav, ogg, webm, flac, mp4 ou mpeg.';
+  }
+
+  return '';
+}
+
+function getFileExtension(fileName: string) {
+  return fileName.split('.').pop()?.toLowerCase() ?? '';
 }
 
 function formatDate(value: string) {
