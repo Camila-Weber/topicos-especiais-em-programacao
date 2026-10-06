@@ -116,7 +116,7 @@ export class TranscriptionsService {
       throw new NotFoundException({
         statusCode: 404,
         code: 'TRANSCRIPTION_NOT_FOUND',
-        message: 'Transcricao nao encontrada.',
+        message: 'Transcrição não encontrada.',
       });
     }
 
@@ -135,7 +135,7 @@ export class TranscriptionsService {
       throw new NotFoundException({
         statusCode: 404,
         code: 'AUDIO_NOT_FOUND',
-        message: 'Audio nao encontrado.',
+        message: 'Áudio não encontrado.',
       });
     }
 
@@ -152,7 +152,7 @@ export class TranscriptionsService {
       throw new NotFoundException({
         statusCode: 404,
         code: 'AUDIO_NOT_FOUND',
-        message: 'Audio nao encontrado.',
+        message: 'Áudio não encontrado.',
       });
     }
   }
@@ -173,7 +173,7 @@ export class TranscriptionsService {
       throw new NotFoundException({
         statusCode: 404,
         code: 'TRANSCRIPTION_NOT_FOUND',
-        message: 'Transcricao nao encontrada.',
+        message: 'Transcrição não encontrada.',
       });
     }
 
@@ -210,7 +210,7 @@ function throwInvalidLanguage(): never {
   throw new BadRequestException({
     statusCode: 400,
     code: 'INVALID_LANGUAGE',
-    message: 'Idioma nao suportado.',
+    message: 'Idioma não suportado.',
   });
 }
 
@@ -243,7 +243,7 @@ function normalizeOptionalDate(value: string | undefined, endOfDay: boolean) {
     throw new BadRequestException({
       statusCode: 400,
       code: 'INVALID_DATE_FILTER',
-      message: 'Filtro de data invalido.',
+      message: 'Filtro de data inválido.',
     });
   }
 

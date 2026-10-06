@@ -53,7 +53,7 @@ export class GroqTranscriptionProvider {
     return new BadGatewayException({
       statusCode: 502,
       code: 'TRANSCRIPTION_PROVIDER_ERROR',
-      message: 'Nao foi possivel transcrever o audio neste momento.',
+      message: 'Não foi possível transcrever o áudio neste momento.',
     });
   }
 }

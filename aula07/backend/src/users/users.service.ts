@@ -30,7 +30,7 @@ export class UsersService {
       throw new NotFoundException({
         statusCode: 404,
         code: 'USER_NOT_FOUND',
-        message: 'Usuario nao encontrado.',
+        message: 'Usuário não encontrado.',
       });
     }
 

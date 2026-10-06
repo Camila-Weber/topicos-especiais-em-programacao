@@ -44,7 +44,7 @@ describe('HttpExceptionFilter', () => {
       new NotFoundException({
         statusCode: 404,
         code: 'TRANSCRIPTION_NOT_FOUND',
-        message: 'Transcricao nao encontrada.',
+        message: 'Transcrição não encontrada.',
       }),
       host.host as never,
     );
@@ -52,7 +52,7 @@ describe('HttpExceptionFilter', () => {
     expect(host.json).toHaveBeenCalledWith({
       statusCode: 404,
       code: 'TRANSCRIPTION_NOT_FOUND',
-      message: 'Transcricao nao encontrada.',
+      message: 'Transcrição não encontrada.',
       details: [],
     });
     expect(json).not.toHaveBeenCalled();

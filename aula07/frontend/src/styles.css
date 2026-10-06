@@ -62,6 +62,34 @@ textarea {
   cursor: pointer;
 }
 
+.private-nav-links,
+.private-session-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.private-nav-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #41505a;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.private-nav-links a:hover,
+.private-nav-links a.active {
+  border-color: #c9d5d8;
+  background: #ffffff;
+  color: #0f766e;
+}
+
 .user-chip {
   color: #172026;
   font-weight: 800;
@@ -1203,6 +1231,12 @@ h1 {
     justify-content: flex-end;
   }
 
+  .private-nav-links,
+  .private-session-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
   .landing-hero {
     grid-template-columns: 1fr;
     min-height: auto;
@@ -1327,6 +1361,17 @@ h1 {
 
   .site-header nav {
     justify-content: flex-start;
+  }
+
+  .private-nav-links,
+  .private-session-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .private-nav-links a {
+    flex: 1 1 auto;
+    justify-content: center;
   }
 
   .hero-metrics {

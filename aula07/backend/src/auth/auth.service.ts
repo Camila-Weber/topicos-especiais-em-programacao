@@ -31,12 +31,12 @@ export class AuthService {
       throw new BadRequestException({
         statusCode: 400,
         code: 'WEAK_PASSWORD',
-        message: 'A senha nao atende aos requisitos de seguranca.',
+        message: 'A senha não atende aos requisitos de segurança.',
         details: [
           {
             field: 'password',
             message:
-              'Use no minimo 8 caracteres, incluindo letra, numero e caractere especial.',
+              'Use no mínimo 8 caracteres, incluindo letra, número e caractere especial.',
           },
         ],
       });
@@ -50,7 +50,7 @@ export class AuthService {
       throw new ConflictException({
         statusCode: 409,
         code: 'EMAIL_ALREADY_EXISTS',
-      message: 'Ja existe uma conta cadastrada com este e-mail.',
+      message: 'Já existe uma conta cadastrada com este e-mail.',
       });
     }
 
@@ -90,7 +90,7 @@ export class AuthService {
       throw new ForbiddenException({
         statusCode: 403,
         code: 'ACCOUNT_INACTIVE',
-        message: 'Esta conta esta desativada.',
+        message: 'Esta conta está desativada.',
       });
     }
 
@@ -113,7 +113,7 @@ export class AuthService {
       throw new UnauthorizedException({
         statusCode: 401,
         code: 'UNAUTHORIZED',
-        message: 'Usuario autenticado nao encontrado.',
+        message: 'Usuário autenticado não encontrado.',
       });
     }
 
@@ -126,7 +126,7 @@ export class AuthService {
     return new UnauthorizedException({
       statusCode: 401,
       code: 'INVALID_CREDENTIALS',
-      message: 'E-mail ou senha invalidos.',
+      message: 'E-mail ou senha inválidos.',
     });
   }
 }

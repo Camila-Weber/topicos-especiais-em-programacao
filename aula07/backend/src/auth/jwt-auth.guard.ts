@@ -30,7 +30,7 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException({
         statusCode: 401,
         code: 'UNAUTHORIZED',
-        message: 'Autenticacao obrigatoria.',
+        message: 'Autenticação obrigatória.',
       });
     }
 
@@ -44,14 +44,14 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException({
           statusCode: 401,
           code: 'TOKEN_EXPIRED',
-          message: 'Sua sessao expirou.',
+          message: 'Sua sessão expirou.',
         });
       }
 
       throw new UnauthorizedException({
         statusCode: 401,
         code: 'UNAUTHORIZED',
-        message: 'Token invalido.',
+        message: 'Token inválido.',
       });
     }
   }

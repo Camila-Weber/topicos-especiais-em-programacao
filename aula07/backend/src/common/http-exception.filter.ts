@@ -75,13 +75,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     if (statusCode === HttpStatus.FORBIDDEN) {
-      return 'Voce nao possui permissao para acessar esta area.';
+      return 'Você não possui permissão para acessar esta área.';
     }
 
     if (statusCode === HttpStatus.NOT_FOUND) {
-      return 'Recurso nao encontrado.';
+      return 'Recurso não encontrado.';
     }
 
-    return 'Nao foi possivel concluir a operacao.';
+    return 'Não foi possível concluir a operação.';
   }
 }

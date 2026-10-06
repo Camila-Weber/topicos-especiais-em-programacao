@@ -18,7 +18,7 @@ export class AdminGuard implements CanActivate {
     throw new ForbiddenException({
       statusCode: 403,
       code: 'FORBIDDEN',
-      message: 'Voce nao possui permissao para acessar esta area.',
+      message: 'Você não possui permissão para acessar esta área.',
     });
   }
 }

@@ -42,7 +42,7 @@ function PublicHeader() {
       <Link className="brand" to="/">
         Ditado
       </Link>
-      <nav aria-label="Navegacao publica">
+      <nav aria-label="Navegacao pública">
         <Link to="/cadastro">Criar conta</Link>
         <Link className="button button-ghost" to="/entrar">
           <LogIn aria-hidden="true" />
@@ -58,64 +58,64 @@ const demoStages = [
     id: 'upload',
     label: 'Upload',
     title: 'Arquivo recebido',
-    description: 'O audio entra por uma rota autenticada e passa pelas validacoes de formato e tamanho.',
+    description: 'O áudio entra por uma rota autenticada e passa pelas validações de formato e tamanho.',
     progress: 34,
   },
   {
     id: 'transcription',
-    label: 'Transcricao',
+    label: 'Transcrição',
     title: 'Whisper trabalhando',
     description: 'O backend envia o arquivo para a Groq e acompanha o retorno sem expor chaves no navegador.',
     progress: 68,
   },
   {
     id: 'done',
-    label: 'Concluido',
+    label: 'Concluído',
     title: 'Texto pronto',
-    description: 'A transcricao fica salva no historico privado, junto com o player e o download do audio.',
+    description: 'A transcrição fica salva no histórico privado, junto com o player e o download do áudio.',
     progress: 100,
   },
 ] as const;
 
 const productFlow = [
   {
-    title: 'Envio do audio',
-    description: 'O usuario seleciona um unico arquivo e visualiza nome, tamanho e formato antes de enviar.',
+    title: 'Envio do áudio',
+    description: 'O usuário seleciona um único arquivo e visualiza nome, tamanho e formato antes de enviar.',
     icon: UploadCloud,
   },
   {
-    title: 'Validacao privada',
-    description: 'O backend valida autenticacao, formato e limite de 25 MB antes de gravar o arquivo.',
+    title: 'Validação privada',
+    description: 'O backend valida autenticação, formato e limite de 25 MB antes de gravar o arquivo.',
     icon: ShieldCheck,
   },
   {
-    title: 'Transcricao',
-    description: 'A Groq e chamada somente pela API, mantendo a chave fora do frontend.',
+    title: 'Transcrição',
+    description: 'A Groq é chamada somente pela API, mantendo a chave fora do frontend.',
     icon: Sparkles,
   },
   {
-    title: 'Historico',
-    description: 'Cada usuario consulta apenas as proprias transcricoes, ordenadas da mais recente para a mais antiga.',
+    title: 'Histórico',
+    description: 'Cada usuário consulta apenas as próprias transcrições, ordenadas da mais recente para a mais antiga.',
     icon: History,
   },
   {
     title: 'Player e download',
-    description: 'O audio e reproduzido por Blob URL autenticada e pode ser baixado quando necessario.',
+    description: 'O áudio é reproduzido por Blob URL autenticada e pode ser baixado quando necessário.',
     icon: PlayCircle,
   },
   {
-    title: 'Exclusao segura',
-    description: 'Ao excluir, o registro e o arquivo fisico associado deixam de ficar disponiveis.',
+    title: 'Exclusão segura',
+    description: 'Ao excluir, o registro e o arquivo físico associado deixam de ficar disponíveis.',
     icon: Trash2,
   },
 ];
 
 const transcriptionLanguages = [
-  { value: 'pt', label: 'Portugues' },
-  { value: 'en', label: 'Ingles' },
+  { value: 'pt', label: 'Português' },
+  { value: 'en', label: 'Inglês' },
   { value: 'es', label: 'Espanhol' },
-  { value: 'fr', label: 'Frances' },
-  { value: 'de', label: 'Alemao' },
+  { value: 'fr', label: 'Francês' },
+  { value: 'de', label: 'Alemão' },
   { value: 'it', label: 'Italiano' },
 ] as const;
 
@@ -150,12 +150,12 @@ function LandingPage() {
       .get<{ data: { status: string } }>('/health')
       .then((response) => {
         if (active) {
-          setApiStatus(response.data.data.status === 'ok' ? 'API conectada' : 'API indisponivel');
+          setApiStatus(response.data.data.status === 'ok' ? 'API conectada' : 'API indisponível');
         }
       })
       .catch(() => {
         if (active) {
-          setApiStatus('API indisponivel');
+          setApiStatus('API indisponível');
         }
       });
 
@@ -170,11 +170,11 @@ function LandingPage() {
 
       <section className="landing-hero">
         <div className="landing-copy">
-          <p className="eyebrow">Transcricao privada de audio</p>
-          <h1>Ditado transforma audio em texto, historico e consulta segura.</h1>
+          <p className="eyebrow">Transcrição privada de áudio</p>
+          <h1>Ditado transforma áudio em texto, histórico e consulta segura.</h1>
           <p className="lead">
-            Uma aplicacao full stack para enviar audios, acompanhar a transcricao, revisar o texto,
-            reproduzir o arquivo original e manter tudo organizado em uma area privada.
+            Uma aplicação full stack para enviar áudios, acompanhar a transcrição, revisar o texto,
+            reproduzir o arquivo original e manter tudo organizado em uma área privada.
           </p>
           <div className="hero-actions">
             <Link className="button button-primary" to="/cadastro">
@@ -189,7 +189,7 @@ function LandingPage() {
           <div className="hero-metrics" aria-label="Resumo do sistema">
             <div>
               <strong>25 MB</strong>
-              <span>limite por audio</span>
+              <span>limite por áudio</span>
             </div>
             <div>
               <strong>5 min</strong>
@@ -202,7 +202,7 @@ function LandingPage() {
           </div>
         </div>
 
-        <div className="demo-panel" aria-label="Demonstracao do produto">
+        <div className="demo-panel" aria-label="Demonstração do produto">
           <div className="motion-orbit motion-orbit-one" aria-hidden="true" />
           <div className="motion-orbit motion-orbit-two" aria-hidden="true" />
           <div className="demo-toolbar">
@@ -212,7 +212,7 @@ function LandingPage() {
           <div className="audio-card">
             <div>
               <p className="audio-name">reuniao-projeto.webm</p>
-              <span>18.4 MB - audio privado</span>
+              <span>18.4 MB - áudio privado</span>
             </div>
             <FileAudio aria-hidden="true" />
           </div>
@@ -252,9 +252,9 @@ function LandingPage() {
       <section className="landing-section flow-showcase" aria-labelledby="flow-title">
         <div className="section-heading">
           <p className="eyebrow">Fluxo principal</p>
-          <h2 id="flow-title">Da selecao do audio ate a consulta no historico.</h2>
+          <h2 id="flow-title">Da seleção do áudio até a consulta no histórico.</h2>
           <p>
-            O Ditado organiza o caminho completo da transcricao, separando interface, API, banco,
+            O Ditado organiza o caminho completo da transcrição, separando interface, API, banco,
             armazenamento privado e provedor externo.
           </p>
         </div>
@@ -293,51 +293,51 @@ function LandingPage() {
       <section className="landing-section feature-band" aria-labelledby="features-title">
         <div className="section-heading">
           <p className="eyebrow">Recursos</p>
-          <h2 id="features-title">O necessario para revisar, comparar e controlar seus audios.</h2>
+          <h2 id="features-title">O necessário para revisar, comparar e controlar seus áudios.</h2>
         </div>
         <div className="feature-grid">
           <article>
             <FileText aria-hidden="true" />
             <h3>Texto completo</h3>
-            <p>O resultado fica disponivel em uma tela de detalhe para leitura e conferencia.</p>
+            <p>O resultado fica disponível em uma tela de detalhe para leitura e conferência.</p>
           </article>
           <article>
             <PlayCircle aria-hidden="true" />
             <h3>Player autenticado</h3>
-            <p>O audio e carregado por uma requisicao protegida e usado como URL temporaria.</p>
+            <p>O áudio é carregado por uma requisição protegida e usado como URL temporária.</p>
           </article>
           <article>
             <Download aria-hidden="true" />
             <h3>Download original</h3>
-            <p>O arquivo enviado pode ser baixado com nome amigavel e sem expor caminho interno.</p>
+            <p>O arquivo enviado pode ser baixado com nome amigável e sem expor caminho interno.</p>
           </article>
           <article>
             <History aria-hidden="true" />
-            <h3>Historico pessoal</h3>
-            <p>As transcricoes aparecem em ordem recente e pertencem apenas ao usuario autenticado.</p>
+            <h3>Histórico pessoal</h3>
+            <p>As transcrições aparecem em ordem recente e pertencem apenas ao usuário autenticado.</p>
           </article>
         </div>
       </section>
 
       <section className="landing-section trust-section" aria-labelledby="trust-title">
         <div className="trust-copy">
-          <p className="eyebrow">Seguranca aplicada</p>
-          <h2 id="trust-title">Privacidade tratada como parte do fluxo, nao como detalhe.</h2>
+          <p className="eyebrow">Segurança aplicada</p>
+          <h2 id="trust-title">Privacidade tratada como parte do fluxo, não como detalhe.</h2>
           <p>
-            O backend concentra as regras sensiveis: autenticacao, permissao, validacao do arquivo,
-            chamada da Groq, streaming, download e exclusao.
+            O backend concentra as regras sensíveis: autenticação, permissão, validação do arquivo,
+            chamada da Groq, streaming, download e exclusão.
           </p>
         </div>
         <div className="trust-grid">
           <div>
             <Lock aria-hidden="true" />
             <strong>JWT curto</strong>
-            <span>Sessao expira em 5 minutos e nao usa refresh token no MVP.</span>
+            <span>Sessão expira em 5 minutos e não usa refresh token no MVP.</span>
           </div>
           <div>
             <Database aria-hidden="true" />
             <strong>Storage privado</strong>
-            <span>Audios ficam fora de pasta publica e usam nome fisico gerado no servidor.</span>
+            <span>Áudios ficam fora de pasta pública e usam nome físico gerado no servidor.</span>
           </div>
           <div>
             <Server aria-hidden="true" />
@@ -346,22 +346,22 @@ function LandingPage() {
           </div>
           <div>
             <UserCheck aria-hidden="true" />
-            <strong>Isolamento por usuario</strong>
-            <span>Recurso de outra conta retorna 404, inclusive audio, download e detalhe.</span>
+            <strong>Isolamento por usuário</strong>
+            <span>Recurso de outra conta retorna 404, inclusive áudio, download e detalhe.</span>
           </div>
         </div>
       </section>
 
       <section className="landing-section admin-preview" aria-labelledby="admin-title">
         <div>
-          <p className="eyebrow">Administracao</p>
+          <p className="eyebrow">Administração</p>
           <h2 id="admin-title">Controle simples de contas no MVP.</h2>
           <p>
-            Administradores podem listar usuarios e ativar ou desativar contas, sem expor senha,
-            hash ou mudanca de papel pela interface.
+            Administradores podem listar usuários e ativar ou desativar contas, sem expor senha,
+            hash ou mudança de papel pela interface.
           </p>
         </div>
-        <div className="admin-preview-list" aria-label="Previa administrativa">
+        <div className="admin-preview-list" aria-label="Prévia administrativa">
           <div>
             <span className="user-avatar">CM</span>
             <strong>Camila Mendes</strong>
@@ -382,8 +382,8 @@ function LandingPage() {
 
       <section className="landing-cta" aria-label="Chamada para cadastro">
         <Clock aria-hidden="true" />
-        <h2>Comece com um audio e acompanhe todo o ciclo.</h2>
-        <p>Cadastre-se para testar o fluxo completo: upload, transcricao, historico, player e download.</p>
+        <h2>Comece com um áudio e acompanhe todo o ciclo.</h2>
+        <p>Cadastre-se para testar o fluxo completo: upload, transcrição, histórico, player e download.</p>
         <div className="hero-actions">
           <Link className="button button-primary" to="/cadastro">
             <UserPlus aria-hidden="true" />
@@ -451,14 +451,14 @@ function RegisterPage() {
         password,
       });
       setStatus('success');
-      setMessage('Conta criada com sucesso. Agora voce pode entrar.');
+      setMessage('Conta criada com sucesso. Agora você pode entrar.');
       setName('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
     } catch (error) {
       setStatus('error');
-      setMessage(getApiMessage(error) || 'Nao foi possivel criar a conta. Confira os dados.');
+      setMessage(getApiMessage(error) || 'Não foi possível criar a conta. Confira os dados.');
     }
   }
 
@@ -469,7 +469,7 @@ function RegisterPage() {
         <p className="eyebrow">Cadastro</p>
         <h1>Crie sua conta no Ditado.</h1>
         <p className="lead">
-          Use uma senha forte para proteger seus audios e transcricoes privadas.
+          Use uma senha forte para proteger seus áudios e transcrições privadas.
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
@@ -511,9 +511,9 @@ function RegisterPage() {
 
           <ul className="password-checklist" aria-label="Criterios da senha">
             <PasswordCheck checked={passwordChecks.minLength} text="8 ou mais caracteres" />
-            <PasswordCheck checked={passwordChecks.hasLetter} text="contem letra" />
-            <PasswordCheck checked={passwordChecks.hasNumber} text="contem numero" />
-            <PasswordCheck checked={passwordChecks.hasSpecial} text="contem caractere especial" />
+            <PasswordCheck checked={passwordChecks.hasLetter} text="contém letra" />
+            <PasswordCheck checked={passwordChecks.hasNumber} text="contém número" />
+            <PasswordCheck checked={passwordChecks.hasSpecial} text="contém caractere especial" />
           </ul>
 
           <label>
@@ -608,7 +608,7 @@ function LoginPage() {
       navigate(from, { replace: true });
     } catch (error) {
       setStatus('error');
-      setMessage(getApiMessage(error) || 'E-mail ou senha invalidos.');
+      setMessage(getApiMessage(error) || 'E-mail ou senha inválidos.');
     }
   }
 
@@ -619,7 +619,7 @@ function LoginPage() {
         <p className="eyebrow">Login</p>
         <h1>Entre no Ditado.</h1>
         <p className="lead">
-          Acesse sua area privada para enviar audios e consultar transcricoes.
+          Acesse sua área privada para enviar áudios e consultar transcrições.
         </p>
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>
@@ -673,6 +673,9 @@ function PrivateLayout({ children }: { children: ReactNode }) {
   const clearSession = useAuthStore((state) => state.clearSession);
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isActivePrivateRoute = (path: string) =>
+    path === '/app' ? location.pathname === path : location.pathname.startsWith(path);
 
   function handleLogout() {
     clearSession();
@@ -686,11 +689,29 @@ function PrivateLayout({ children }: { children: ReactNode }) {
           Ditado
         </Link>
         <nav aria-label="Navegacao privada">
-          <span className="user-chip">{user?.name ?? 'Usuario'}</span>
-          <button className="button button-ghost" onClick={handleLogout} type="button">
-            <LogOut aria-hidden="true" />
-            Sair
-          </button>
+          <div className="private-nav-links">
+            <Link className={isActivePrivateRoute('/app') ? 'active' : ''} to="/app">
+              Nova transcrição
+            </Link>
+            <Link className={isActivePrivateRoute('/app/historico') ? 'active' : ''} to="/app/historico">
+              Histórico
+            </Link>
+            {user?.role === 'admin' ? (
+              <Link
+                className={isActivePrivateRoute('/app/admin/usuarios') ? 'active' : ''}
+                to="/app/admin/usuarios"
+              >
+                Usuários
+              </Link>
+            ) : null}
+          </div>
+          <div className="private-session-actions">
+            <span className="user-chip">{user?.name ?? 'Usuário'}</span>
+            <button className="button button-ghost" onClick={handleLogout} type="button">
+              <LogOut aria-hidden="true" />
+              Sair
+            </button>
+          </div>
         </nav>
       </header>
       {children}
@@ -755,7 +776,7 @@ function NewTranscriptionPage() {
   const [file, setFile] = useState<File | null>(null);
   const [language, setLanguage] = useState('pt');
   const [status, setStatus] = useState<'idle' | 'selected' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('Arraste um audio ou video para comecar.');
+  const [message, setMessage] = useState('Arraste um áudio ou vídeo para começar.');
   const [result, setResult] = useState<TranscriptionResult | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const audioPreviewUrl = useMemo(() => (file ? URL.createObjectURL(file) : ''), [file]);
@@ -775,7 +796,7 @@ function NewTranscriptionPage() {
     if (!selectedFile) {
       setFile(null);
       setStatus('idle');
-      setMessage('Arraste um audio ou video para comecar.');
+      setMessage('Arraste um áudio ou vídeo para começar.');
       return;
     }
 
@@ -790,7 +811,7 @@ function NewTranscriptionPage() {
 
     setFile(selectedFile);
     setStatus('selected');
-    setMessage('Arquivo pronto para transcricao.');
+    setMessage('Arquivo pronto para transcrição.');
   }
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -825,7 +846,7 @@ function NewTranscriptionPage() {
 
     if (!file) {
       setStatus('error');
-      setMessage('Selecione ou arraste um arquivo de audio/video.');
+      setMessage('Selecione ou arraste um arquivo de áudio/vídeo.');
       return;
     }
 
@@ -833,16 +854,16 @@ function NewTranscriptionPage() {
     formData.append('file', file);
     formData.append('language', language);
     setStatus('loading');
-    setMessage('Enviando e transcrevendo seu audio...');
+    setMessage('Enviando e transcrevendo seu áudio...');
 
     try {
       const response = await api.post<{ data: TranscriptionResult }>('/transcriptions', formData);
       setResult(response.data.data);
       setStatus('success');
-      setMessage('Transcricao concluida.');
+      setMessage('Transcrição concluída.');
     } catch (error) {
       setStatus('error');
-      setMessage(getApiMessage(error) || 'Nao foi possivel transcrever o audio agora.');
+      setMessage(getApiMessage(error) || 'Não foi possível transcrever o áudio agora.');
     }
   }
 
@@ -850,8 +871,8 @@ function NewTranscriptionPage() {
     <PrivateLayout>
       <section className="transcription-layout">
         <div className="upload-panel">
-          <p className="eyebrow">Nova transcricao</p>
-          <h1>Envie audio ou video para transcrever.</h1>
+          <p className="eyebrow">Nova transcrição</p>
+          <h1>Envie áudio ou vídeo para transcrever.</h1>
           <p className="lead">
             Arraste o arquivo, escolha o idioma e acompanhe o resultado sem sair desta tela.
           </p>
@@ -875,7 +896,7 @@ function NewTranscriptionPage() {
               <span>
                 {file
                   ? 'Clique para trocar o arquivo antes de enviar.'
-                  : 'Ou clique para escolher um audio ou video MP4.'}
+                  : 'Ou clique para escolher um áudio ou vídeo MP4.'}
               </span>
             </label>
 
@@ -906,7 +927,7 @@ function NewTranscriptionPage() {
                 </div>
                 <div>
                   <dt>Formato</dt>
-                  <dd>{file.type || 'nao informado'}</dd>
+                  <dd>{file.type || 'não informado'}</dd>
                 </div>
                 <div>
                   <dt>Idioma</dt>
@@ -926,7 +947,7 @@ function NewTranscriptionPage() {
               </div>
               <div>
                 <Check aria-hidden="true" />
-                <span>Uma transcricao por envio</span>
+                <span>Uma transcrição por envio</span>
               </div>
             </div>
 
@@ -936,7 +957,7 @@ function NewTranscriptionPage() {
 
             <button className="button button-primary" disabled={!file || status === 'loading'} type="submit">
               <FileAudio aria-hidden="true" />
-              {status === 'loading' ? 'Transcrevendo...' : 'Enviar audio'}
+              {status === 'loading' ? 'Transcrevendo...' : 'Enviar áudio'}
             </button>
           </form>
         </div>
@@ -958,14 +979,14 @@ function NewTranscriptionPage() {
                 </Link>
                 <Link className="button button-secondary" to="/app/historico">
                   <History aria-hidden="true" />
-                  Ver historico
+                  Ver histórico
                 </Link>
               </div>
             </>
           ) : (
             <p className="empty-result">
-              O texto transcrito, o player local e os atalhos para detalhe/historico aparecerao aqui
-              apos o envio.
+              O texto transcrito, o player local e os atalhos para detalhe/histórico aparecerão aqui
+              após o envio.
             </p>
           )}
         </div>
@@ -977,7 +998,7 @@ function NewTranscriptionPage() {
 function HistoryPage() {
   const [items, setItems] = useState<TranscriptionListItem[]>([]);
   const [status, setStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
-  const [message, setMessage] = useState('Carregando historico...');
+  const [message, setMessage] = useState('Carregando histórico...');
   const [deletingId, setDeletingId] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -1020,7 +1041,7 @@ function HistoryPage() {
     }
 
     setStatus('loading');
-    setMessage('Carregando historico...');
+    setMessage('Carregando histórico...');
 
     api
       .get<{ data: TranscriptionListItem[]; meta: TranscriptionListMeta }>(
@@ -1038,8 +1059,8 @@ function HistoryPage() {
           setStatus('empty');
           setMessage(
             searchQuery || languageFilter || dateFrom || dateTo
-              ? 'Nenhuma transcricao encontrada com os filtros atuais.'
-              : 'Voce ainda nao possui transcricoes.',
+              ? 'Nenhuma transcrição encontrada com os filtros atuais.'
+              : 'Você ainda não possui transcrições.',
           );
         } else {
           setStatus('success');
@@ -1052,7 +1073,7 @@ function HistoryPage() {
         }
 
         setStatus('error');
-        setMessage(getApiMessage(error) || 'Nao foi possivel carregar o historico.');
+        setMessage(getApiMessage(error) || 'Não foi possível carregar o histórico.');
       });
 
     return () => {
@@ -1077,7 +1098,7 @@ function HistoryPage() {
 
   async function handleDelete(id: string, originalFileName: string) {
     const confirmed = window.confirm(
-      `Excluir a transcricao "${originalFileName}" e remover o audio associado?`,
+      `Excluir a transcrição "${originalFileName}" e remover o áudio associado?`,
     );
 
     if (!confirmed) {
@@ -1092,7 +1113,7 @@ function HistoryPage() {
       setRefreshKey((currentKey) => currentKey + 1);
     } catch (error) {
       setStatus('error');
-      setMessage(getApiMessage(error) || 'Nao foi possivel excluir a transcricao.');
+      setMessage(getApiMessage(error) || 'Não foi possível excluir a transcrição.');
     } finally {
       setDeletingId('');
     }
@@ -1103,13 +1124,13 @@ function HistoryPage() {
       <section className="history-panel">
         <div className="history-header">
           <div>
-            <p className="eyebrow">Historico</p>
-            <h1>Suas transcricoes.</h1>
-            <p className="lead">A lista mostra apenas audios enviados pela sua conta.</p>
+            <p className="eyebrow">Histórico</p>
+            <h1>Suas transcrições.</h1>
+            <p className="lead">A lista mostra apenas áudios enviados pela sua conta.</p>
           </div>
           <Link className="button button-primary" to="/app">
             <FileAudio aria-hidden="true" />
-            Nova transcricao
+            Nova transcrição
           </Link>
         </div>
 
@@ -1155,7 +1176,7 @@ function HistoryPage() {
           </label>
 
           <label>
-            Ate
+            Até
             <input
               onChange={(event) => {
                 setDateTo(event.target.value);
@@ -1167,7 +1188,7 @@ function HistoryPage() {
           </label>
 
           <label>
-            Por pagina
+            Por página
             <select
               onChange={(event) => {
                 setPageSize(Number(event.target.value));
@@ -1201,7 +1222,7 @@ function HistoryPage() {
           <>
             <div className="history-summary">
               <span>
-                {meta.total} resultado{meta.total === 1 ? '' : 's'} · pagina {meta.page} de{' '}
+                {meta.total} resultado{meta.total === 1 ? '' : 's'} · página {meta.page} de{' '}
                 {meta.totalPages}
               </span>
             </div>
@@ -1210,7 +1231,7 @@ function HistoryPage() {
                 <article className="history-item" key={item.id}>
                   <div>
                     <h2>{item.originalFileName}</h2>
-                    <p>{item.textPreview || 'Sem previa disponivel.'}</p>
+                    <p>{item.textPreview || 'Sem prévia disponível.'}</p>
                     <span>
                       {formatDate(item.createdAt)} · {formatBytes(item.fileSize)} ·{' '}
                       {getLanguageLabel(item.language)}
@@ -1234,7 +1255,7 @@ function HistoryPage() {
                 </article>
               ))}
             </div>
-            <div className="pagination-controls" aria-label="Paginacao do historico">
+            <div className="pagination-controls" aria-label="Paginação do histórico">
               <button
                 className="button button-secondary"
                 disabled={!meta.hasPreviousPage}
@@ -1244,7 +1265,7 @@ function HistoryPage() {
                 Anterior
               </button>
               <span>
-                Pagina {meta.page} de {meta.totalPages}
+                Página {meta.page} de {meta.totalPages}
               </span>
               <button
                 className="button button-secondary"
@@ -1252,7 +1273,7 @@ function HistoryPage() {
                 onClick={() => setPage((currentPage) => currentPage + 1)}
                 type="button"
               >
-                Proxima
+                Próxima
               </button>
             </div>
           </>
@@ -1266,9 +1287,9 @@ function TranscriptionDetailPage() {
   const { id } = useParams();
   const [detail, setDetail] = useState<TranscriptionResult | null>(null);
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('Carregando transcricao...');
+  const [message, setMessage] = useState('Carregando transcrição...');
   const [audioUrl, setAudioUrl] = useState('');
-  const [audioMessage, setAudioMessage] = useState('Carregando audio...');
+  const [audioMessage, setAudioMessage] = useState('Carregando áudio...');
   const [downloadMessage, setDownloadMessage] = useState('');
   const [deleteMessage, setDeleteMessage] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -1279,7 +1300,7 @@ function TranscriptionDetailPage() {
 
     if (!id) {
       setStatus('error');
-      setMessage('Transcricao nao encontrada.');
+      setMessage('Transcrição não encontrada.');
       return;
     }
 
@@ -1300,7 +1321,7 @@ function TranscriptionDetailPage() {
         }
 
         setStatus('error');
-        setMessage(getApiMessage(error) || 'Transcricao nao encontrada.');
+        setMessage(getApiMessage(error) || 'Transcrição não encontrada.');
       });
 
     return () => {
@@ -1316,7 +1337,7 @@ function TranscriptionDetailPage() {
       return;
     }
 
-    setAudioMessage('Carregando audio...');
+    setAudioMessage('Carregando áudio...');
     setAudioUrl('');
 
     api
@@ -1337,7 +1358,7 @@ function TranscriptionDetailPage() {
           return;
         }
 
-        setAudioMessage(getApiMessage(error) || 'Nao foi possivel carregar o audio.');
+        setAudioMessage(getApiMessage(error) || 'Não foi possível carregar o áudio.');
       });
 
     return () => {
@@ -1370,7 +1391,7 @@ function TranscriptionDetailPage() {
       URL.revokeObjectURL(downloadUrl);
       setDownloadMessage('');
     } catch (error) {
-      setDownloadMessage(getApiMessage(error) || 'Nao foi possivel baixar o audio.');
+      setDownloadMessage(getApiMessage(error) || 'Não foi possível baixar o áudio.');
     }
   }
 
@@ -1380,7 +1401,7 @@ function TranscriptionDetailPage() {
     }
 
     const confirmed = window.confirm(
-      `Excluir a transcricao "${detail.originalFileName}" e remover o audio associado?`,
+      `Excluir a transcrição "${detail.originalFileName}" e remover o áudio associado?`,
     );
 
     if (!confirmed) {
@@ -1394,7 +1415,7 @@ function TranscriptionDetailPage() {
       await api.delete(`/transcriptions/${id}`);
       navigate('/app/historico', { replace: true });
     } catch (error) {
-      setDeleteMessage(getApiMessage(error) || 'Nao foi possivel excluir a transcricao.');
+      setDeleteMessage(getApiMessage(error) || 'Não foi possível excluir a transcrição.');
     } finally {
       setIsDeleting(false);
     }
@@ -1406,13 +1427,13 @@ function TranscriptionDetailPage() {
         <div className="history-header">
           <div>
             <p className="eyebrow">Detalhe</p>
-            <h1>{detail?.originalFileName ?? 'Transcricao'}</h1>
+            <h1>{detail?.originalFileName ?? 'Transcrição'}</h1>
             <p className="lead">
-              Confira o texto completo e os metadados do audio enviado.
+              Confira o texto completo e os metadados do áudio enviado.
             </p>
           </div>
           <Link className="button button-secondary" to="/app/historico">
-            Voltar ao historico
+            Voltar ao histórico
           </Link>
         </div>
 
@@ -1424,7 +1445,7 @@ function TranscriptionDetailPage() {
           <div className="detail-grid">
             <aside className="detail-card">
               <FileAudio aria-hidden="true" />
-              <h2>Audio</h2>
+              <h2>Áudio</h2>
               <dl className="file-summary">
                 <div>
                   <dt>Arquivo</dt>
@@ -1456,7 +1477,7 @@ function TranscriptionDetailPage() {
                 )}
                 <button className="button button-secondary" onClick={handleDownload} type="button">
                   <Download aria-hidden="true" />
-                  Baixar audio
+                  Baixar áudio
                 </button>
                 {downloadMessage ? <p className="history-state">{downloadMessage}</p> : null}
                 <button
@@ -1496,12 +1517,12 @@ function AdminUsersPage() {
 
     if (currentUser?.role !== 'admin') {
       setStatus('error');
-      setMessage('Voce nao possui permissao para acessar esta area.');
+      setMessage('Você não possui permissão para acessar esta área.');
       return;
     }
 
     setStatus('loading');
-    setMessage('Carregando usuarios...');
+    setMessage('Carregando usuários...');
 
     api
       .get<{ data: AdminUser[] }>('/users')
@@ -1520,7 +1541,7 @@ function AdminUsersPage() {
         }
 
         setStatus('error');
-        setMessage(getApiMessage(error) || 'Nao foi possivel carregar usuarios.');
+        setMessage(getApiMessage(error) || 'Não foi possível carregar usuários.');
       });
 
     return () => {
@@ -1541,7 +1562,7 @@ function AdminUsersPage() {
       );
     } catch (error) {
       setStatus('error');
-      setMessage(getApiMessage(error) || 'Nao foi possivel atualizar o usuario.');
+      setMessage(getApiMessage(error) || 'Não foi possível atualizar o usuário.');
     } finally {
       setUpdatingId('');
     }
@@ -1552,9 +1573,9 @@ function AdminUsersPage() {
       <section className="history-panel">
         <div className="history-header">
           <div>
-            <p className="eyebrow">Administracao</p>
-            <h1>Usuarios cadastrados.</h1>
-            <p className="lead">Gerencie somente o status das contas nesta versao.</p>
+            <p className="eyebrow">Administração</p>
+            <h1>Usuários cadastrados.</h1>
+            <p className="lead">Gerencie somente o status das contas nesta versão.</p>
           </div>
         </div>
 
@@ -1563,13 +1584,13 @@ function AdminUsersPage() {
         ) : null}
 
         {status === 'success' ? (
-          <div className="admin-table" role="table" aria-label="Usuarios">
+          <div className="admin-table" role="table" aria-label="Usuários">
             <div className="admin-row admin-head" role="row">
               <span role="columnheader">Nome</span>
               <span role="columnheader">E-mail</span>
               <span role="columnheader">Papel</span>
               <span role="columnheader">Status</span>
-              <span role="columnheader">Acao</span>
+              <span role="columnheader">Ação</span>
             </div>
             {users.map((user) => (
               <div className="admin-row" key={user.id} role="row">
@@ -1618,7 +1639,7 @@ function getLanguageLabel(language: string) {
 
 function validateUploadFile(selectedFile: File) {
   if (selectedFile.size > maxUploadSizeBytes) {
-    return `O arquivo precisa ter ate ${formatBytes(maxUploadSizeBytes)}.`;
+    return `O arquivo precisa ter até ${formatBytes(maxUploadSizeBytes)}.`;
   }
 
   const extension = getFileExtension(selectedFile.name);
@@ -1627,7 +1648,7 @@ function validateUploadFile(selectedFile: File) {
   const extensionIsAllowed = allowedUploadExtensions.has(extension);
 
   if (!typeIsAllowed && !extensionIsAllowed) {
-    return 'Formato nao suportado. Use mp3, m4a, wav, ogg, webm, flac, mp4 ou mpeg.';
+    return 'Formato não suportado. Use mp3, m4a, wav, ogg, webm, flac, mp4 ou mpeg.';
   }
 
   return '';
@@ -1650,10 +1671,10 @@ function NotFoundPage() {
       <PublicHeader />
       <section className="auth-panel">
         <p className="eyebrow">404</p>
-        <h1>Pagina nao encontrada.</h1>
-        <p className="lead">O caminho informado nao existe no Ditado.</p>
+        <h1>Página não encontrada.</h1>
+        <p className="lead">O caminho informado não existe no Ditado.</p>
         <Link className="button button-primary" to="/">
-          Voltar para o inicio
+          Voltar para o início
         </Link>
       </section>
     </main>

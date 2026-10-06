@@ -493,6 +493,45 @@ Validacao:
 - [ ] Validacao visual/manual no navegador pendente.
 - [ ] Transcricao real com Groq segue pendente por depender de `GROQ_API_KEY`.
 
+## 19. Navegacao Privada e Portugues do Brasil
+
+Objetivo:
+
+- [x] Permitir navegacao entre paginas privadas sem depender do envio previo de arquivo.
+- [x] Corrigir textos, campos e mensagens visiveis ao usuario para Portugues do Brasil com acentuacao.
+- [x] Preservar rotas tecnicas, identificadores, MIME types e contratos da API sem acentuacao.
+
+Subetapas:
+
+- [x] Adicionar navegacao privada persistente no `PrivateLayout`.
+- [x] Incluir links para `Nova transcricao`, `Historico` e `Usuarios` quando o usuario for admin.
+- [x] Destacar a rota privada ativa.
+- [x] Separar visualmente navegacao e acao de sair.
+- [x] Corrigir acentuacao em mensagens do frontend.
+- [x] Corrigir acentuacao em mensagens de erro do backend.
+- [x] Revisar efeitos colaterais para manter rotas como `/app/historico`, `/app/transcricoes/:id` e `/app/admin/usuarios`.
+- [x] Revisar efeitos colaterais para manter valores tecnicos como `audio`, `video/mp4`, `textarea`, nomes de funcoes e codigos de erro.
+
+Criterios de aceite:
+
+- [x] Usuario autenticado acessa `/app/historico` pelo menu sem enviar arquivo antes.
+- [x] Usuario autenticado volta para `/app` pelo menu.
+- [x] Usuario comum nao ve link administrativo.
+- [x] Admin ve link para `/app/admin/usuarios`.
+- [x] Rota ativa possui destaque visual.
+- [x] Mensagens visiveis ao usuario estao em Portugues do Brasil com acentuacao.
+- [x] Rotas tecnicas e contratos existentes continuam sem acentuacao.
+- [x] Testes do backend passam.
+- [x] Build do backend passa.
+- [x] Build do frontend passa.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Validacao visual/manual no navegador pendente.
+
 ## Decisoes Consolidadas
 
 - O armazenamento de audio sera local e privado no backend.

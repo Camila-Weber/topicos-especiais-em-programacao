@@ -68,7 +68,7 @@ export class StorageService {
       throw new BadRequestException({
         statusCode: 400,
         code: 'FILE_REQUIRED',
-        message: 'Selecione um arquivo de audio.',
+        message: 'Selecione um arquivo de áudio.',
       });
     }
 
@@ -89,7 +89,7 @@ export class StorageService {
       throw new BadRequestException({
         statusCode: 400,
         code: 'INVALID_AUDIO_TYPE',
-        message: 'Formato de audio nao suportado.',
+        message: 'Formato de áudio não suportado.',
       });
     }
   }
