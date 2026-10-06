@@ -36,9 +36,9 @@ Navegador -> Frontend Vite -> Proxy /api -> Backend NestJS
 - Login com JWT de curta duracao.
 - Logout e limpeza da sessao local.
 - Protecao de rotas privadas.
-- Upload de um arquivo de audio por vez.
+- Upload de um arquivo de audio/video por vez, com selecao por clique ou arrastar e soltar.
 - Envio do audio ao backend para transcricao via Groq.
-- Historico privado de transcricoes.
+- Historico privado de transcricoes com busca, filtros e paginacao.
 - Detalhe da transcricao com texto completo.
 - Player autenticado usando Blob URL temporaria.
 - Download autenticado do audio original.
@@ -63,8 +63,8 @@ Rotas iniciadas por `/app` exigem usuario autenticado. A rota administrativa exi
 - `POST /api/auth/register`: cadastro.
 - `POST /api/auth/login`: login.
 - `GET /api/auth/me`: dados da sessao autenticada.
-- `POST /api/transcriptions`: cria transcricao a partir de upload de audio.
-- `GET /api/transcriptions`: lista historico do usuario.
+- `POST /api/transcriptions`: cria transcricao a partir de upload de audio/video.
+- `GET /api/transcriptions`: lista historico paginado do usuario.
 - `GET /api/transcriptions/:id`: busca detalhe da transcricao.
 - `GET /api/transcriptions/:id/audio`: retorna audio para reproducao.
 - `GET /api/transcriptions/:id/audio/download`: baixa audio original.
@@ -97,6 +97,10 @@ Rotas iniciadas por `/app` exigem usuario autenticado. A rota administrativa exi
 - Apenas um arquivo deve ser enviado por vez.
 - O tamanho maximo permitido e 25 MB.
 - Formatos aceitos: `mp3`, `m4a`, `wav`, `ogg`, `webm`, `flac`, `mp4` e `mpeg`.
+- A tela de envio permite selecionar arquivo por clique ou arrastar e soltar na area de upload.
+- O idioma deve ser escolhido em um select com nomes completos.
+- Idiomas disponiveis: Portugues (`pt`), Ingles (`en`), Espanhol (`es`), Frances (`fr`), Alemao (`de`) e Italiano (`it`).
+- A API recebe a sigla do idioma e rejeita valores fora da lista com `400 INVALID_LANGUAGE`.
 - O arquivo e salvo em diretorio privado do backend.
 - O nome fisico do arquivo e gerado pelo servidor.
 - O nome original nao controla o caminho fisico.
@@ -104,6 +108,50 @@ Rotas iniciadas por `/app` exigem usuario autenticado. A rota administrativa exi
 - A Groq e chamada somente pelo backend.
 - Se a transcricao falhar antes da persistencia, o arquivo salvo deve ser removido.
 - Sem `GROQ_API_KEY`, um upload valido deve falhar de forma controlada com `502 TRANSCRIPTION_PROVIDER_ERROR`.
+
+## Historico Paginado
+
+O historico em `/app/historico` consulta `GET /api/transcriptions` com filtros opcionais:
+
+- `page`: pagina atual. Padrao: `1`.
+- `pageSize`: itens por pagina. Padrao: `10`; maximo: `50`.
+- `q`: busca por nome do arquivo ou texto transcrito.
+- `language`: filtra por idioma (`pt`, `en`, `es`, `fr`, `de`, `it`).
+- `dateFrom`: data inicial no formato `YYYY-MM-DD`.
+- `dateTo`: data final no formato `YYYY-MM-DD`.
+
+Exemplo:
+
+```text
+GET /api/transcriptions?page=1&pageSize=10&q=reuniao&language=pt
+```
+
+Formato da resposta:
+
+```json
+{
+  "data": [
+    {
+      "id": "uuid-da-transcricao",
+      "originalFileName": "reuniao.mp3",
+      "fileSize": 123456,
+      "language": "pt",
+      "textPreview": "Trecho inicial da transcricao...",
+      "createdAt": "2026-10-05T10:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "pageSize": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+O historico continua exibindo apenas transcricoes do usuario autenticado e nao retorna `storedFileName` nem caminhos internos.
 
 ## Requisitos Locais
 

@@ -462,28 +462,36 @@ Validacao:
 
 Objetivo:
 
-- [ ] Atualizar documentacao apos autorizacao e conclusao da etapa 17.
-- [ ] Validar o fluxo integrado de envio, historico, busca, detalhe e exclusao.
-- [ ] Pedir autorizacao antes de iniciar esta etapa.
+- [x] Atualizar documentacao apos autorizacao e conclusao da etapa 17.
+- [x] Validar o fluxo integrado de envio, historico, busca, detalhe e exclusao.
+- [x] Pedir autorizacao antes de iniciar esta etapa.
 
 Subetapas:
 
-- [ ] Atualizar `README.md` com nova experiencia de envio.
-- [ ] Documentar idiomas disponiveis com nome completo e sigla enviada.
-- [ ] Documentar parametros de busca paginada.
-- [ ] Validar envio por clique e drag and drop.
-- [ ] Validar arquivo invalido e idioma invalido direto na API.
-- [ ] Validar busca, filtro de idioma, filtro de data e paginacao.
-- [ ] Validar abertura de detalhe, exclusao e atualizacao de lista.
+- [x] Atualizar `README.md` com nova experiencia de envio.
+- [x] Documentar idiomas disponiveis com nome completo e sigla enviada.
+- [x] Documentar parametros de busca paginada.
+- [ ] Validar envio por clique e drag and drop. Pendente de validacao visual/manual no navegador.
+- [x] Validar arquivo invalido e idioma invalido direto na API por testes automatizados.
+- [x] Validar busca, filtro de idioma, filtro de data e paginacao por testes automatizados/build.
+- [ ] Validar abertura de detalhe, exclusao e atualizacao de lista. Pendente de validacao visual/manual no navegador.
 
 Criterios de aceite:
 
-- [ ] Plano atualizado.
-- [ ] README atualizado.
-- [ ] Testes automatizados do backend passam.
-- [ ] Build do backend passa.
-- [ ] Build do frontend passa.
-- [ ] Validacao manual do fluxo principal marcada no plano.
+- [x] Plano atualizado.
+- [x] README atualizado.
+- [x] Testes automatizados do backend passam.
+- [x] Build do backend passa.
+- [x] Build do frontend passa.
+- [x] Validacao manual do fluxo principal marcada no plano.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Validacao visual/manual no navegador pendente.
+- [ ] Transcricao real com Groq segue pendente por depender de `GROQ_API_KEY`.
 
 ## Decisoes Consolidadas
 
