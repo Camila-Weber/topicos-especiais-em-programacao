@@ -8,6 +8,7 @@ import {
   Headers,
   Param,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseGuards,
@@ -27,10 +28,8 @@ export class TranscriptionsController {
   constructor(private readonly transcriptionsService: TranscriptionsService) {}
 
   @Get()
-  async list(@CurrentUser() user: AuthenticatedUser) {
-    return {
-      data: await this.transcriptionsService.listByUser(user.sub),
-    };
+  async list(@CurrentUser() user: AuthenticatedUser, @Query() query: Record<string, string>) {
+    return this.transcriptionsService.listByUser(user.sub, query);
   }
 
   @Get(':id')

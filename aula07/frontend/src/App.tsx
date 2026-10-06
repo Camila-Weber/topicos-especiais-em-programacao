@@ -734,6 +734,15 @@ type TranscriptionListItem = {
   createdAt: string;
 };
 
+type TranscriptionListMeta = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
 type AdminUser = {
   id: string;
   name: string;
@@ -970,22 +979,68 @@ function HistoryPage() {
   const [status, setStatus] = useState<'loading' | 'success' | 'empty' | 'error'>('loading');
   const [message, setMessage] = useState('Carregando historico...');
   const [deletingId, setDeletingId] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [languageFilter, setLanguageFilter] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [meta, setMeta] = useState<TranscriptionListMeta>({
+    page: 1,
+    pageSize: 10,
+    total: 0,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPreviousPage: false,
+  });
 
   useEffect(() => {
     let active = true;
+    const params = new URLSearchParams({
+      page: String(page),
+      pageSize: String(pageSize),
+    });
+
+    if (searchQuery) {
+      params.set('q', searchQuery);
+    }
+
+    if (languageFilter) {
+      params.set('language', languageFilter);
+    }
+
+    if (dateFrom) {
+      params.set('dateFrom', dateFrom);
+    }
+
+    if (dateTo) {
+      params.set('dateTo', dateTo);
+    }
+
+    setStatus('loading');
+    setMessage('Carregando historico...');
 
     api
-      .get<{ data: TranscriptionListItem[] }>('/transcriptions')
+      .get<{ data: TranscriptionListItem[]; meta: TranscriptionListMeta }>(
+        `/transcriptions?${params.toString()}`,
+      )
       .then((response) => {
         if (!active) {
           return;
         }
 
         setItems(response.data.data);
+        setMeta(response.data.meta);
 
         if (response.data.data.length === 0) {
           setStatus('empty');
-          setMessage('Voce ainda nao possui transcricoes.');
+          setMessage(
+            searchQuery || languageFilter || dateFrom || dateTo
+              ? 'Nenhuma transcricao encontrada com os filtros atuais.'
+              : 'Voce ainda nao possui transcricoes.',
+          );
         } else {
           setStatus('success');
           setMessage('');
@@ -1003,7 +1058,22 @@ function HistoryPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [dateFrom, dateTo, languageFilter, page, pageSize, refreshKey, searchQuery]);
+
+  function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPage(1);
+    setSearchQuery(searchInput.trim());
+  }
+
+  function handleClearFilters() {
+    setSearchInput('');
+    setSearchQuery('');
+    setLanguageFilter('');
+    setDateFrom('');
+    setDateTo('');
+    setPage(1);
+  }
 
   async function handleDelete(id: string, originalFileName: string) {
     const confirmed = window.confirm(
@@ -1019,16 +1089,7 @@ function HistoryPage() {
 
     try {
       await api.delete(`/transcriptions/${id}`);
-      setItems((currentItems) => {
-        const nextItems = currentItems.filter((item) => item.id !== id);
-
-        if (nextItems.length === 0) {
-          setStatus('empty');
-          setMessage('Voce ainda nao possui transcricoes.');
-        }
-
-        return nextItems;
-      });
+      setRefreshKey((currentKey) => currentKey + 1);
     } catch (error) {
       setStatus('error');
       setMessage(getApiMessage(error) || 'Nao foi possivel excluir a transcricao.');
@@ -1052,39 +1113,149 @@ function HistoryPage() {
           </Link>
         </div>
 
+        <form className="history-filters" onSubmit={handleSearchSubmit}>
+          <label>
+            Pesquisar
+            <input
+              onChange={(event) => setSearchInput(event.target.value)}
+              placeholder="Nome do arquivo ou texto transcrito"
+              type="search"
+              value={searchInput}
+            />
+          </label>
+
+          <label>
+            Idioma
+            <select
+              onChange={(event) => {
+                setLanguageFilter(event.target.value);
+                setPage(1);
+              }}
+              value={languageFilter}
+            >
+              <option value="">Todos os idiomas</option>
+              {transcriptionLanguages.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            De
+            <input
+              onChange={(event) => {
+                setDateFrom(event.target.value);
+                setPage(1);
+              }}
+              type="date"
+              value={dateFrom}
+            />
+          </label>
+
+          <label>
+            Ate
+            <input
+              onChange={(event) => {
+                setDateTo(event.target.value);
+                setPage(1);
+              }}
+              type="date"
+              value={dateTo}
+            />
+          </label>
+
+          <label>
+            Por pagina
+            <select
+              onChange={(event) => {
+                setPageSize(Number(event.target.value));
+                setPage(1);
+              }}
+              value={pageSize}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          </label>
+
+          <div className="filter-actions">
+            <button className="button button-primary" type="submit">
+              <Eye aria-hidden="true" />
+              Pesquisar
+            </button>
+            <button className="button button-secondary" onClick={handleClearFilters} type="button">
+              Limpar
+            </button>
+          </div>
+        </form>
+
         {status === 'loading' || status === 'empty' || status === 'error' ? (
           <p className={`history-state ${status === 'error' ? 'error-text' : ''}`}>{message}</p>
         ) : null}
 
         {status === 'success' ? (
-          <div className="history-list">
-            {items.map((item) => (
-              <article className="history-item" key={item.id}>
-                <div>
-                  <h2>{item.originalFileName}</h2>
-                  <p>{item.textPreview || 'Sem previa disponivel.'}</p>
-                  <span>
-                    {formatDate(item.createdAt)} · {formatBytes(item.fileSize)} · {item.language}
-                  </span>
-                </div>
-                <div className="history-actions">
-                  <Link className="button button-secondary" to={`/app/transcricoes/${item.id}`}>
-                    <Eye aria-hidden="true" />
-                    Visualizar
-                  </Link>
-                  <button
-                    className="button button-secondary danger"
-                    disabled={deletingId === item.id}
-                    onClick={() => void handleDelete(item.id, item.originalFileName)}
-                    type="button"
-                  >
-                    <Trash2 aria-hidden="true" />
-                    {deletingId === item.id ? 'Excluindo...' : 'Excluir'}
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+          <>
+            <div className="history-summary">
+              <span>
+                {meta.total} resultado{meta.total === 1 ? '' : 's'} · pagina {meta.page} de{' '}
+                {meta.totalPages}
+              </span>
+            </div>
+            <div className="history-list">
+              {items.map((item) => (
+                <article className="history-item" key={item.id}>
+                  <div>
+                    <h2>{item.originalFileName}</h2>
+                    <p>{item.textPreview || 'Sem previa disponivel.'}</p>
+                    <span>
+                      {formatDate(item.createdAt)} · {formatBytes(item.fileSize)} ·{' '}
+                      {getLanguageLabel(item.language)}
+                    </span>
+                  </div>
+                  <div className="history-actions">
+                    <Link className="button button-secondary" to={`/app/transcricoes/${item.id}`}>
+                      <Eye aria-hidden="true" />
+                      Visualizar
+                    </Link>
+                    <button
+                      className="button button-secondary danger"
+                      disabled={deletingId === item.id}
+                      onClick={() => void handleDelete(item.id, item.originalFileName)}
+                      type="button"
+                    >
+                      <Trash2 aria-hidden="true" />
+                      {deletingId === item.id ? 'Excluindo...' : 'Excluir'}
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="pagination-controls" aria-label="Paginacao do historico">
+              <button
+                className="button button-secondary"
+                disabled={!meta.hasPreviousPage}
+                onClick={() => setPage((currentPage) => Math.max(1, currentPage - 1))}
+                type="button"
+              >
+                Anterior
+              </button>
+              <span>
+                Pagina {meta.page} de {meta.totalPages}
+              </span>
+              <button
+                className="button button-secondary"
+                disabled={!meta.hasNextPage}
+                onClick={() => setPage((currentPage) => currentPage + 1)}
+                type="button"
+              >
+                Proxima
+              </button>
+            </div>
+          </>
         ) : null}
       </section>
     </PrivateLayout>

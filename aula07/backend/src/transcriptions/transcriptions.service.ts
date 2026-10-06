@@ -9,6 +9,15 @@ import { isAllowedTranscriptionLanguage } from './transcription-languages';
 import { Transcription } from './transcription.entity';
 import { toTranscriptionListItem, toTranscriptionResponse } from './transcription-presenter';
 
+export type ListTranscriptionsFilters = {
+  page?: string | number;
+  pageSize?: string | number;
+  q?: string;
+  language?: string;
+  dateFrom?: string;
+  dateTo?: string;
+};
+
 @Injectable()
 export class TranscriptionsService {
   constructor(
@@ -44,15 +53,55 @@ export class TranscriptionsService {
     }
   }
 
-  async listByUser(userId: string) {
-    const transcriptions = await this.transcriptionsRepository.find({
-      where: { userId },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  async listByUser(userId: string, filters: ListTranscriptionsFilters = {}) {
+    const page = normalizePositiveInteger(filters.page, 1);
+    const pageSize = Math.min(normalizePositiveInteger(filters.pageSize, 10), 50);
+    const search = normalizeOptionalText(filters.q);
+    const language = normalizeOptionalLanguage(filters.language);
+    const dateFrom = normalizeOptionalDate(filters.dateFrom, false);
+    const dateTo = normalizeOptionalDate(filters.dateTo, true);
+    const queryBuilder = this.transcriptionsRepository
+      .createQueryBuilder('transcription')
+      .where('transcription.userId = :userId', { userId })
+      .orderBy('transcription.createdAt', 'DESC')
+      .skip((page - 1) * pageSize)
+      .take(pageSize);
 
-    return transcriptions.map(toTranscriptionListItem);
+    if (search) {
+      queryBuilder.andWhere(
+        '(LOWER(transcription.originalFileName) LIKE :search OR LOWER(transcription.text) LIKE :search)',
+        {
+          search: `%${search.toLowerCase()}%`,
+        },
+      );
+    }
+
+    if (language) {
+      queryBuilder.andWhere('transcription.language = :language', { language });
+    }
+
+    if (dateFrom) {
+      queryBuilder.andWhere('transcription.createdAt >= :dateFrom', { dateFrom });
+    }
+
+    if (dateTo) {
+      queryBuilder.andWhere('transcription.createdAt <= :dateTo', { dateTo });
+    }
+
+    const [transcriptions, total] = await queryBuilder.getManyAndCount();
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+    return {
+      data: transcriptions.map(toTranscriptionListItem),
+      meta: {
+        page,
+        pageSize,
+        total,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
   }
 
   async findOneForUser(userId: string, id: string) {
@@ -137,12 +186,66 @@ function normalizeLanguage(language: string | undefined) {
   const normalizedLanguage = language || 'pt';
 
   if (!isAllowedTranscriptionLanguage(normalizedLanguage)) {
-    throw new BadRequestException({
-      statusCode: 400,
-      code: 'INVALID_LANGUAGE',
-      message: 'Idioma nao suportado.',
-    });
+    throwInvalidLanguage();
   }
 
   return normalizedLanguage;
+}
+
+function normalizeOptionalLanguage(language: string | undefined) {
+  const normalizedLanguage = normalizeOptionalText(language);
+
+  if (!normalizedLanguage) {
+    return '';
+  }
+
+  if (!isAllowedTranscriptionLanguage(normalizedLanguage)) {
+    throwInvalidLanguage();
+  }
+
+  return normalizedLanguage;
+}
+
+function throwInvalidLanguage(): never {
+  throw new BadRequestException({
+    statusCode: 400,
+    code: 'INVALID_LANGUAGE',
+    message: 'Idioma nao suportado.',
+  });
+}
+
+function normalizePositiveInteger(value: string | number | undefined, fallback: number) {
+  const parsedValue = typeof value === 'number' ? value : Number(value);
+
+  if (!Number.isInteger(parsedValue) || parsedValue < 1) {
+    return fallback;
+  }
+
+  return parsedValue;
+}
+
+function normalizeOptionalText(value: string | undefined) {
+  return typeof value === 'string' ? value.trim().toLowerCase() : '';
+}
+
+function normalizeOptionalDate(value: string | undefined, endOfDay: boolean) {
+  const normalizedValue = typeof value === 'string' ? value.trim() : '';
+
+  if (!normalizedValue) {
+    return null;
+  }
+
+  const dateValue = /^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)
+    ? new Date(`${normalizedValue}T${endOfDay ? '23:59:59.999' : '00:00:00.000'}Z`)
+    : new Date(normalizedValue);
+
+  if (Number.isNaN(dateValue.getTime())) {
+    throw new BadRequestException({
+      statusCode: 400,
+      code: 'INVALID_DATE_FILTER',
+      message: 'Filtro de data invalido.',
+    });
+  }
+
+  return dateValue;
 }

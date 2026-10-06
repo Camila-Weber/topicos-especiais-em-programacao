@@ -32,6 +32,10 @@ describe('TranscriptionsService', () => {
       addSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getManyAndCount: jest.fn().mockResolvedValue([transcriptions, transcriptions.length]),
       getOne: jest.fn().mockResolvedValue(audio),
     };
     const repository = {
@@ -41,7 +45,6 @@ describe('TranscriptionsService', () => {
         ...data,
       })),
       save: jest.fn(async (entity) => entity),
-      find: jest.fn().mockResolvedValue(transcriptions),
       findOne: jest.fn().mockResolvedValue(detail),
       createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
       remove: jest.fn().mockResolvedValue(undefined),
@@ -128,7 +131,7 @@ describe('TranscriptionsService', () => {
     expect(provider.transcribe).not.toHaveBeenCalled();
   });
 
-  it('lists only authenticated user transcriptions ordered by newest first', async () => {
+  it('lists only authenticated user transcriptions ordered by newest first with pagination meta', async () => {
     const transcription = {
       id: 'transcription-id',
       userId: 'user-id',
@@ -141,27 +144,82 @@ describe('TranscriptionsService', () => {
       text: 'Texto transcrito com muitas palavras para exibir uma previa no historico.',
       createdAt: new Date('2026-10-04T20:00:00.000Z'),
     } as Transcription;
-    const { service, repository } = createService({
+    const { service, repository, queryBuilder } = createService({
       transcriptions: [transcription],
     });
 
     const result = await service.listByUser('user-id');
 
-    expect(repository.find).toHaveBeenCalledWith({
-      where: { userId: 'user-id' },
-      order: { createdAt: 'DESC' },
+    expect(repository.createQueryBuilder).toHaveBeenCalledWith('transcription');
+    expect(queryBuilder.where).toHaveBeenCalledWith('transcription.userId = :userId', {
+      userId: 'user-id',
     });
-    expect(result).toEqual([
-      {
-        id: 'transcription-id',
-        originalFileName: 'reuniao.mp3',
-        fileSize: 10,
-        language: 'pt',
-        textPreview: 'Texto transcrito com muitas palavras para exibir uma previa no historico.',
-        createdAt: new Date('2026-10-04T20:00:00.000Z'),
+    expect(queryBuilder.orderBy).toHaveBeenCalledWith('transcription.createdAt', 'DESC');
+    expect(queryBuilder.skip).toHaveBeenCalledWith(0);
+    expect(queryBuilder.take).toHaveBeenCalledWith(10);
+    expect(result).toEqual({
+      data: [
+        {
+          id: 'transcription-id',
+          originalFileName: 'reuniao.mp3',
+          fileSize: 10,
+          language: 'pt',
+          textPreview: 'Texto transcrito com muitas palavras para exibir uma previa no historico.',
+          createdAt: new Date('2026-10-04T20:00:00.000Z'),
+        },
+      ],
+      meta: {
+        page: 1,
+        pageSize: 10,
+        total: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
       },
-    ]);
-    expect('storedFileName' in result[0]).toBe(false);
+    });
+    expect('storedFileName' in result.data[0]).toBe(false);
+  });
+
+  it('applies search, language, date and pagination filters when listing history', async () => {
+    const { service, queryBuilder } = createService();
+
+    await service.listByUser('user-id', {
+      page: '2',
+      pageSize: '20',
+      q: ' Reuniao ',
+      language: 'pt',
+      dateFrom: '2026-10-01',
+      dateTo: '2026-10-05',
+    });
+
+    expect(queryBuilder.skip).toHaveBeenCalledWith(20);
+    expect(queryBuilder.take).toHaveBeenCalledWith(20);
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+      '(LOWER(transcription.originalFileName) LIKE :search OR LOWER(transcription.text) LIKE :search)',
+      {
+        search: '%reuniao%',
+      },
+    );
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith('transcription.language = :language', {
+      language: 'pt',
+    });
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith('transcription.createdAt >= :dateFrom', {
+      dateFrom: new Date('2026-10-01T00:00:00.000Z'),
+    });
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith('transcription.createdAt <= :dateTo', {
+      dateTo: new Date('2026-10-05T23:59:59.999Z'),
+    });
+  });
+
+  it('rejects unsupported language filters when listing history', async () => {
+    const { service, queryBuilder } = createService();
+
+    await expect(
+      service.listByUser('user-id', {
+        language: 'jp',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(queryBuilder.getManyAndCount).not.toHaveBeenCalled();
   });
 
   it('returns detail for an authenticated owner without exposing storedFileName', async () => {

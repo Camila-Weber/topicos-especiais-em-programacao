@@ -424,32 +424,39 @@ Validacao:
 
 Objetivo:
 
-- [ ] Evoluir `/app/historico` com busca, filtros e paginacao.
-- [ ] Manter abertura de detalhe em `/app/transcricoes/:id`.
-- [ ] Pedir autorizacao antes de iniciar esta etapa.
+- [x] Evoluir `/app/historico` com busca, filtros e paginacao.
+- [x] Manter abertura de detalhe em `/app/transcricoes/:id`.
+- [x] Pedir autorizacao antes de iniciar esta etapa.
 
 Subetapas:
 
-- [ ] Alterar `GET /api/transcriptions` para aceitar `page`, `pageSize`, `q`, `language`, `dateFrom` e `dateTo`.
-- [ ] Retornar `data` e `meta` com dados de paginacao.
-- [ ] Filtrar sempre por usuario autenticado.
-- [ ] Buscar por nome original e texto transcrito.
-- [ ] Filtrar idioma por select com nomes completos.
-- [ ] Filtrar por intervalo de datas.
-- [ ] Atualizar frontend do historico com pesquisa, filtros, paginacao e estados de carregamento/vazio/erro.
+- [x] Alterar `GET /api/transcriptions` para aceitar `page`, `pageSize`, `q`, `language`, `dateFrom` e `dateTo`.
+- [x] Retornar `data` e `meta` com dados de paginacao.
+- [x] Filtrar sempre por usuario autenticado.
+- [x] Buscar por nome original e texto transcrito.
+- [x] Filtrar idioma por select com nomes completos.
+- [x] Filtrar por intervalo de datas.
+- [x] Atualizar frontend do historico com pesquisa, filtros, paginacao e estados de carregamento/vazio/erro.
 
 Criterios de aceite:
 
-- [ ] Historico exige JWT.
-- [ ] Pesquisa por texto encontra nome de arquivo e conteudo transcrito.
-- [ ] Filtro de idioma funciona com select.
-- [ ] Idioma invalido na query retorna `400 INVALID_LANGUAGE`.
-- [ ] Filtros de data funcionam.
-- [ ] Paginacao mostra total e navega corretamente.
-- [ ] Usuario ve apenas suas transcricoes.
-- [ ] Detalhe abre pela pagina existente.
-- [ ] Listagem nao expoe `storedFileName`.
-- [ ] Testes do backend e build do frontend passam.
+- [x] Historico exige JWT.
+- [x] Pesquisa por texto encontra nome de arquivo e conteudo transcrito.
+- [x] Filtro de idioma funciona com select.
+- [x] Idioma invalido na query retorna `400 INVALID_LANGUAGE`.
+- [x] Filtros de data funcionam.
+- [x] Paginacao mostra total e navega corretamente.
+- [x] Usuario ve apenas suas transcricoes.
+- [x] Detalhe abre pela pagina existente.
+- [x] Listagem nao expoe `storedFileName`.
+- [x] Testes do backend e build do frontend passam.
+
+Validacao:
+
+- [x] Testes automatizados do backend passaram.
+- [x] Build do backend passou.
+- [x] Build do frontend passou.
+- [ ] Validacao visual manual no navegador.
 
 ## 18. Validacao Integrada e Documentacao
 
