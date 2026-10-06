@@ -86,6 +86,7 @@ Subetapas:
 - [x] Normalizar e-mail.
 - [x] Persistir `passwordHash`.
 - [x] Criar formulario com checklist de senha.
+- [x] Autenticar automaticamente apos cadastro valido e abrir `/app`.
 
 Criterios de aceite:
 
@@ -96,6 +97,10 @@ Criterios de aceite:
 - [x] `role` e `active` enviados pelo cliente sao rejeitados.
 - [x] Usuario criado recebe `role = user` e `active = true`.
 - [x] `passwordHash` nunca aparece em JSON.
+- [x] `POST /api/auth/register` retorna usuario, `accessToken` e `expiresIn`.
+- [x] Frontend salva a sessao apos cadastro bem-sucedido.
+- [x] Usuario cadastrado e redirecionado para `/app`.
+- [x] Erros de cadastro nao retornam token nem criam sessao local.
 
 Validacao:
 

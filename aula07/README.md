@@ -32,7 +32,7 @@ Navegador -> Frontend Vite -> Proxy /api -> Backend NestJS
 ## Funcionalidades
 
 - Landing page pública.
-- Cadastro com validação de nome, e-mail e senha forte.
+- Cadastro com validação de nome, e-mail, senha forte e login automático após criação da conta.
 - Login com JWT de curta duração.
 - Logout e limpeza da sessão local.
 - Proteção de rotas privadas.
@@ -69,7 +69,7 @@ Dentro da área autenticada, o cabeçalho exibe navegação persistente:
 ## Endpoints da API
 
 - `GET /api/health`: verificação de saúde da API.
-- `POST /api/auth/register`: cadastro.
+- `POST /api/auth/register`: cadastro; em caso de sucesso, retorna usuário, token JWT e expiração.
 - `POST /api/auth/login`: login.
 - `GET /api/auth/me`: dados da sessão autenticada.
 - `POST /api/transcriptions`: cria transcrição a partir de upload de áudio/vídeo.
@@ -85,10 +85,12 @@ Dentro da área autenticada, o cabeçalho exibe navegação persistente:
 
 - O cadastro sempre cria usuário com `role = user` e `active = true`.
 - O cliente não pode definir `role` nem `active` no cadastro.
+- Cadastro bem-sucedido já inicia sessão e redireciona o usuário para `/app`.
 - O e-mail é normalizado antes de salvar.
 - Senhas devem ter pelo menos 8 caracteres, letra, número e caractere especial.
 - A senha nunca é armazenada em texto puro; somente `passwordHash`.
 - `passwordHash` nunca deve aparecer em respostas da API.
+- Erros de cadastro, como e-mail duplicado ou senha fraca, não retornam token.
 - Login de conta inativa retorna `403 ACCOUNT_INACTIVE`.
 - Login inválido retorna `401 INVALID_CREDENTIALS`.
 - O JWT expira em 5 minutos.

@@ -418,6 +418,8 @@ function getApiMessage(error: unknown) {
 }
 
 function RegisterPage() {
+  const navigate = useNavigate();
+  const setSession = useAuthStore((state) => state.setSession);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -445,17 +447,29 @@ function RegisterPage() {
     setMessage('');
 
     try {
-      await api.post('/auth/register', {
+      const response = await api.post<{
+        data: {
+          user: {
+            id: string;
+            name: string;
+            email: string;
+            role: 'user' | 'admin';
+          };
+          accessToken: string;
+          expiresIn: number;
+        };
+      }>('/auth/register', {
         name,
         email,
         password,
       });
+      setSession({
+        user: response.data.data.user,
+        accessToken: response.data.data.accessToken,
+      });
       setStatus('success');
-      setMessage('Conta criada com sucesso. Agora você pode entrar.');
-      setName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
+      setMessage('Conta criada com sucesso. Abrindo sua área privada...');
+      navigate('/app', { replace: true });
     } catch (error) {
       setStatus('error');
       setMessage(getApiMessage(error) || 'Não foi possível criar a conta. Confira os dados.');

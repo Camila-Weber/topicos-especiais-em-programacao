@@ -41,8 +41,8 @@ describe('AuthService', () => {
     };
   }
 
-  it('creates an active user with role user and does not expose passwordHash', async () => {
-    const { service, repository } = createService();
+  it('creates an active user, returns JWT and does not expose passwordHash', async () => {
+    const { service, repository, jwtService } = createService();
 
     const result = await service.register({
       name: 'Ana Souza',
@@ -65,6 +65,12 @@ describe('AuthService', () => {
       role: UserRole.User,
       active: true,
     });
+    expect(jwtService.signAsync).toHaveBeenCalledWith({
+      sub: 'user-id',
+      role: UserRole.User,
+    });
+    expect(result.accessToken).toBe('jwt-token');
+    expect(result.expiresIn).toBe(300);
     expect('passwordHash' in result.user).toBe(false);
   });
 

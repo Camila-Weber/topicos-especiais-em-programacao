@@ -50,7 +50,7 @@ export class AuthService {
       throw new ConflictException({
         statusCode: 409,
         code: 'EMAIL_ALREADY_EXISTS',
-      message: 'Já existe uma conta cadastrada com este e-mail.',
+        message: 'Já existe uma conta cadastrada com este e-mail.',
       });
     }
 
@@ -66,6 +66,11 @@ export class AuthService {
 
     return {
       user: toPublicUser(savedUser),
+      accessToken: await this.jwtService.signAsync({
+        sub: savedUser.id,
+        role: savedUser.role,
+      }),
+      expiresIn: 300,
     };
   }
 
