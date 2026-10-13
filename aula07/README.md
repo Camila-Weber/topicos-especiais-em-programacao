@@ -187,6 +187,77 @@ docker compose version
 
 Se estiver usando WSL, o Docker Desktop precisa estar aberto e com a integração WSL habilitada para a distribuição Linux usada no terminal.
 
+## Execução do Zero
+
+Use estes comandos para preparar e rodar a aplicação em uma máquina local a partir deste repositório.
+
+Entre na pasta do sistema:
+
+```bash
+cd aula07/topicos-especiais-em-programacao/aula07
+```
+
+Instale as dependências:
+
+```bash
+cd backend
+npm install
+
+cd ../frontend
+npm install
+```
+
+Crie o arquivo de ambiente do backend:
+
+```bash
+cd ..
+cp .env.example backend/.env
+```
+
+Edite `backend/.env` e configure:
+
+```env
+JWT_SECRET=troque-por-um-valor-local-seguro
+GROQ_API_KEY=sua-chave-groq-opcional-para-transcricao-real
+GROQ_TRANSCRIPTION_MODEL=whisper-large-v3-turbo
+```
+
+Suba o PostgreSQL:
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+Em um terminal, rode o backend:
+
+```bash
+cd backend
+npm run start:dev
+```
+
+Em outro terminal, rode o frontend:
+
+```bash
+cd frontend
+npm run dev -- --host 127.0.0.1
+```
+
+Acesse:
+
+```text
+Frontend: http://127.0.0.1:5173
+Backend:  http://localhost:3000/api
+Health:   http://localhost:3000/api/health
+```
+
+Para parar:
+
+```bash
+# pare backend e frontend com Ctrl+C nos terminais correspondentes
+docker compose down
+```
+
 ## Configuração
 
 Entre na pasta do projeto:
@@ -351,3 +422,23 @@ Pendências conhecidas:
 - O storage local de áudio fica no backend e é ignorado pelo Git.
 - O plano de execução por etapas está em `PLANO_DE_ACAO.md`.
 - A especificação funcional e técnica está em `ESPECIFICACAO.md`.
+
+## Declaração de Uso de IA
+
+Ferramentas e modelos usados no desenvolvimento e no funcionamento do sistema:
+
+- OpenAI Codex, baseado em GPT-5: usado como assistente de desenvolvimento para interpretar a especificação, criar o plano de ação, implementar backend/frontend, ajustar textos em português do Brasil, revisar documentação e orientar testes.
+- Groq API com modelo `whisper-large-v3-turbo`: usada pelo backend em tempo de execução para transcrever os arquivos de áudio/vídeo enviados pelos usuários.
+
+Uso por etapa:
+
+- Planejamento: OpenAI Codex auxiliou na decomposição das etapas, critérios de aceite e fluxos do sistema.
+- Implementação: OpenAI Codex auxiliou na criação e ajuste de código NestJS, React, TypeScript, testes e estilos.
+- Documentação: OpenAI Codex auxiliou na redação e atualização de `README.md` e `PLANO_DE_ACAO.md`.
+- Transcrição real: Groq Whisper é acionado somente pelo backend quando um usuário autenticado envia um arquivo válido para transcrição.
+
+Cuidados adotados:
+
+- A chave `GROQ_API_KEY` fica apenas no arquivo local `backend/.env`.
+- O frontend não contém chave da Groq e não chama a Groq diretamente.
+- Nenhuma senha, token completo, chave real ou segredo deve ser colocado no repositório.
