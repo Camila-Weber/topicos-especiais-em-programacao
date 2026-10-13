@@ -4,6 +4,18 @@ Aplicação web full stack para transcrever arquivos de áudio em texto, manter 
 
 O sistema foi desenvolvido conforme a especificação em `ESPECIFICACAO.md` e o plano de acompanhamento em `PLANO_DE_ACAO.md`.
 
+## Detalhes
+
+**Disciplina:** TÓPICOS ESPECIAIS EM PROGRAMAÇÃO
+
+**Docente:** BENEVID FELIX DA SILVA
+
+**Discentes:**
+- CAMILA WEBER - camila.weber@unemat.br
+- VITOR EMANUEL S. SAUZEN - vitor.sauzen@unemat.br
+- WILLEN SILVA DE SOUZA - willen.silva@unemat.br
+
+
 ## Visão Geral
 
 O Ditado possui três perfis de uso:
