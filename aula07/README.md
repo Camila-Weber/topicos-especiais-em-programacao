@@ -192,7 +192,7 @@ Se estiver usando WSL, o Docker Desktop precisa estar aberto e com a integraçã
 Entre na pasta do projeto:
 
 ```bash
-cd /home/camila/tep/aula07/topicos-especiais-em-programacao/aula07
+cd /topicos-especiais-em-programacao/aula07
 ```
 
 Instale as dependências do backend:
