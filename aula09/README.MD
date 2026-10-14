@@ -11,6 +11,8 @@
 - VITOR EMANUEL S. SAUZEN - vitor.sauzen@unemat.br
 - WILLEN SILVA DE SOUZA - willen.silva@unemat.br
 
+**LINK DO GIT:** https://github.com/Camila-Weber/topicos-especiais-em-programacao/tree/main/aula09
+
 
 ### Observações
 
