@@ -15,6 +15,7 @@ O sistema foi desenvolvido conforme a especificação em `ESPECIFICACAO.md` e o 
 - VITOR EMANUEL S. SAUZEN - vitor.sauzen@unemat.br
 - WILLEN SILVA DE SOUZA - willen.silva@unemat.br
 
+**LINK DO GIT:** https://github.com/Camila-Weber/topicos-especiais-em-programacao/tree/main/aula07
 
 ## Visão Geral
 
