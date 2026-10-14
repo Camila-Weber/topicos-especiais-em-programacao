@@ -1,0 +1,660 @@
+{
+  "name": "parte04",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://brasilapi.com.br/api/cep/v2/{{ $json.cep.replace(/\\D/g, '') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        464
+      ],
+      "id": "454f9749-e3f8-47dd-b79b-b0e7fec754cf",
+      "name": "Consulta Cep",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c794df14-1fb1-42b5-b90c-59930cbcf632",
+              "leftValue": "={{ $json.state }}",
+              "rightValue": "MT",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        288
+      ],
+      "id": "775eea73-8699-4eef-8962-4a751a20deff",
+      "name": "Endereco e de MT?"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "ljwVbCKHMD1x4KUV",
+          "mode": "list",
+          "cachedResultName": "cadastro fornecedores",
+          "cachedResultUrl": "/projects/jNYWCsDPvcpeJ6sZ/datatables/ljwVbCKHMD1x4KUV"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "protocolo": "={{ $json.protocolo }}",
+            "razao_social": "={{ $json.rasao_social }}",
+            "cnpj": "={{ $json.cnpj }}",
+            "email": "={{ $json.email }}",
+            "municipio": "={{ $json.municipio }}",
+            "cep": "={{ $json.cep }}",
+            "uf": "={{ $json.estado }}",
+            "consultado_em": "={{ $json.consultado_em }}",
+            "mensagem": "={{ $json.mensagem }}",
+            "situacao": "={{ $json.situacao }}",
+            "logradouro": "={{ $json.logradouro }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "protocolo",
+              "displayName": "protocolo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "razao_social",
+              "displayName": "razao_social",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cnpj",
+              "displayName": "cnpj",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cep",
+              "displayName": "cep",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "municipio",
+              "displayName": "municipio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "uf",
+              "displayName": "uf",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "logradouro",
+              "displayName": "logradouro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "situacao",
+              "displayName": "situacao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mensagem",
+              "displayName": "mensagem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "consultado_em",
+              "displayName": "consultado_em",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        864,
+        256
+      ],
+      "id": "1eb752ef-8d1b-4871-bb73-44cb2ea76875",
+      "name": "registrar"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d29fa37c-fbd5-4a0d-bfe5-4aa913098c94",
+              "name": "protocolo",
+              "value": "={{ $('Dados').item.json.protocolo }}",
+              "type": "string"
+            },
+            {
+              "id": "1a27e190-8b0a-44b1-ba4c-54b86d08baa6",
+              "name": "rasao_social",
+              "value": "={{ $('Dados').item.json.razao_social }}",
+              "type": "string"
+            },
+            {
+              "id": "8821890d-5ccf-4d54-8e91-5e225b834117",
+              "name": "cnpj",
+              "value": "={{ $('Dados').item.json.cnpj }}",
+              "type": "string"
+            },
+            {
+              "id": "a336fd9e-2b42-46f9-916d-f667f978854a",
+              "name": "email",
+              "value": "={{ $('Dados').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "f14b2199-57e7-4ab3-b29e-83a4d664f9b7",
+              "name": "cep",
+              "value": "={{ $('Dados').item.json.cep }}",
+              "type": "string"
+            },
+            {
+              "id": "5c4171d1-8f75-40ad-a8bc-2452fda45046",
+              "name": "municipio",
+              "value": "={{ $('Consulta Cep').item.json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "521ec561-cabf-4197-be2e-02239a1ef45b",
+              "name": "estado",
+              "value": "={{ $('Consulta Cep').item.json.state }}",
+              "type": "string"
+            },
+            {
+              "id": "da994b3d-c6be-4ad1-a62d-ce4043affdd5",
+              "name": "logradouro",
+              "value": "={{ $('Consulta Cep').item.json.street }}",
+              "type": "string"
+            },
+            {
+              "id": "0b843244-28a9-473a-807c-26f064dbae60",
+              "name": "situacao",
+              "value": "CeP NÃO LOCALIZADO",
+              "type": "string"
+            },
+            {
+              "id": "5b5e94f3-bf1a-4d4c-933b-4a3626196151",
+              "name": "mensagem",
+              "value": "=Prezado(a) {{ $('Dados').item.json.representante }}, o endereço informado no pedido {{ $('Dados').item.json.protocolo }} ({{ $json.street }}, {{ $json.city }}/{{ $json.state }}) foi barrado pela consulta ao CEP. O cadastro da {{ $('Dados').item.json.razao_social }} se encontra parado.",
+              "type": "string"
+            },
+            {
+              "id": "b1939429-7654-4ead-be97-1b503e27d71e",
+              "name": "consultado_em",
+              "value": "={{ $now.setZone('America/Cuiaba').toFormat('dd/MM/yyyy HH:mm') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        608
+      ],
+      "id": "3a80b5ea-9805-4695-9026-c0b9b9ea91f5",
+      "name": "Erro na busca"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d29fa37c-fbd5-4a0d-bfe5-4aa913098c94",
+              "name": "protocolo",
+              "value": "={{ $('Dados').item.json.protocolo }}",
+              "type": "string"
+            },
+            {
+              "id": "1a27e190-8b0a-44b1-ba4c-54b86d08baa6",
+              "name": "rasao_social",
+              "value": "={{ $('Dados').item.json.razao_social }}",
+              "type": "string"
+            },
+            {
+              "id": "8821890d-5ccf-4d54-8e91-5e225b834117",
+              "name": "cnpj",
+              "value": "={{ $('Dados').item.json.cnpj }}",
+              "type": "string"
+            },
+            {
+              "id": "a336fd9e-2b42-46f9-916d-f667f978854a",
+              "name": "email",
+              "value": "={{ $('Dados').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "f14b2199-57e7-4ab3-b29e-83a4d664f9b7",
+              "name": "cep",
+              "value": "={{ $('Dados').item.json.cep }}",
+              "type": "string"
+            },
+            {
+              "id": "5c4171d1-8f75-40ad-a8bc-2452fda45046",
+              "name": "municipio",
+              "value": "={{ $('Consulta Cep').item.json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "521ec561-cabf-4197-be2e-02239a1ef45b",
+              "name": "estado",
+              "value": "={{ $('Consulta Cep').item.json.state }}",
+              "type": "string"
+            },
+            {
+              "id": "da994b3d-c6be-4ad1-a62d-ce4043affdd5",
+              "name": "logradouro",
+              "value": "={{ $('Consulta Cep').item.json.street }}",
+              "type": "string"
+            },
+            {
+              "id": "0b843244-28a9-473a-807c-26f064dbae60",
+              "name": "situacao",
+              "value": "apto",
+              "type": "string"
+            },
+            {
+              "id": "5b5e94f3-bf1a-4d4c-933b-4a3626196151",
+              "name": "mensagem",
+              "value": "=Prezado(a) {{ $('Dados').item.json.representante }}, o endereço informado no pedido {{ $('Dados').item.json.protocolo }} ({{ $json.street }}, {{ $json.city }}/{{ $json.state }}) foi confirmado pela consulta ao CEP. O cadastro da {{ $('Dados').item.json.razao_social }} segue para a análise documental.",
+              "type": "string"
+            },
+            {
+              "id": "b1939429-7654-4ead-be97-1b503e27d71e",
+              "name": "consultado_em",
+              "value": "={{ $now.setZone('America/Cuiaba').toFormat('dd/MM/yyyy HH:mm') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        160
+      ],
+      "id": "ccf01cc4-949c-447d-9ecf-54abfeaee6bc",
+      "name": "SUCESSO"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d29fa37c-fbd5-4a0d-bfe5-4aa913098c94",
+              "name": "protocolo",
+              "value": "={{ $('Dados').item.json.protocolo }}",
+              "type": "string"
+            },
+            {
+              "id": "1a27e190-8b0a-44b1-ba4c-54b86d08baa6",
+              "name": "rasao_social",
+              "value": "={{ $('Dados').item.json.razao_social }}",
+              "type": "string"
+            },
+            {
+              "id": "8821890d-5ccf-4d54-8e91-5e225b834117",
+              "name": "cnpj",
+              "value": "={{ $('Dados').item.json.cnpj }}",
+              "type": "string"
+            },
+            {
+              "id": "a336fd9e-2b42-46f9-916d-f667f978854a",
+              "name": "email",
+              "value": "={{ $('Dados').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "f14b2199-57e7-4ab3-b29e-83a4d664f9b7",
+              "name": "cep",
+              "value": "={{ $('Dados').item.json.cep }}",
+              "type": "string"
+            },
+            {
+              "id": "5c4171d1-8f75-40ad-a8bc-2452fda45046",
+              "name": "municipio",
+              "value": "={{ $('Consulta Cep').item.json.city }}",
+              "type": "string"
+            },
+            {
+              "id": "521ec561-cabf-4197-be2e-02239a1ef45b",
+              "name": "estado",
+              "value": "={{ $('Consulta Cep').item.json.state }}",
+              "type": "string"
+            },
+            {
+              "id": "da994b3d-c6be-4ad1-a62d-ce4043affdd5",
+              "name": "logradouro",
+              "value": "={{ $('Consulta Cep').item.json.street }}",
+              "type": "string"
+            },
+            {
+              "id": "0b843244-28a9-473a-807c-26f064dbae60",
+              "name": "situacao",
+              "value": "inapto",
+              "type": "string"
+            },
+            {
+              "id": "5b5e94f3-bf1a-4d4c-933b-4a3626196151",
+              "name": "mensagem",
+              "value": "=Prezado(a) {{ $('Dados').item.json.representante }}, o endereço informado no pedido {{ $('Dados').item.json.protocolo }} ({{ $json.street }}, {{ $json.city }}/{{ $json.state }}) foi barrado pela consulta ao CEP. O cadastro da {{ $('Dados').item.json.razao_social }} se encontra parado.",
+              "type": "string"
+            },
+            {
+              "id": "b1939429-7654-4ead-be97-1b503e27d71e",
+              "name": "consultado_em",
+              "value": "={{ $now.setZone('America/Cuiaba').toFormat('dd/MM/yyyy HH:mm') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        352
+      ],
+      "id": "99009ce2-85df-4258-8cbd-1d953fa38058",
+      "name": "FALHA"
+    },
+    {
+      "parameters": {
+        "formTitle": "TEP",
+        "formDescription": "TEP- aula 13/10",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Protocolo",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Razão Social",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "CNPJ",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Representante",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "E-mail",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "CEP",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "path": "tep",
+          "customCss": "\n:root {\n  /* Typography */\n  --font-family: 'Inter', 'Open Sans', sans-serif;\n  --font-weight-normal: 400;\n  --font-weight-bold: 600;\n\n  --font-size-body: 14px;\n  --font-size-label: 13px;\n  --font-size-test-notice: 12px;\n  --font-size-input: 14px;\n  --font-size-header: 24px;\n  --font-size-paragraph: 14px;\n  --font-size-link: 13px;\n  --font-size-error: 12px;\n\n  --font-size-html-h1: 30px;\n  --font-size-html-h2: 24px;\n  --font-size-html-h3: 20px;\n  --font-size-html-h4: 17px;\n  --font-size-html-h5: 15px;\n  --font-size-html-h6: 13px;\n  --font-size-subheader: 14px;\n\n  /* Modern color palette */\n  --color-background: #F3F7FA;\n\n  --color-test-notice-text: #9A6518;\n  --color-test-notice-bg: #FFF8E9;\n  --color-test-notice-border: #F4D89A;\n\n  --color-card-bg: #FFFFFF;\n  --color-card-border: #E2EAF0;\n  --color-card-shadow: rgba(24, 59, 67, 0.08);\n\n  --color-link: #176B72;\n  --color-header: #183B43;\n  --color-label: #34545A;\n\n  --color-input-border: #D7E5E9;\n  --color-input-text: #243E44;\n  --color-focus-border: #176B72;\n\n  --color-submit-btn-bg: #176B72;\n  --color-submit-btn-text: #FFFFFF;\n\n  --color-error: #DC4755;\n  --color-required: #E66D65;\n\n  --color-clear-button-bg: #81999D;\n\n  --color-html-text: #425E64;\n  --color-html-link: #176B72;\n  --color-header-subtext: #71858A;\n\n  /* Rounded corners */\n  --border-radius-card: 20px;\n  --border-radius-input: 10px;\n  --border-radius-clear-btn: 50%;\n  --card-border-radius: 20px;\n\n  /* Spacing */\n  --padding-container-top: 48px;\n  --padding-card: 32px;\n\n  --padding-test-notice-vertical: 12px;\n  --padding-test-notice-horizontal: 20px;\n\n  --margin-bottom-card: 20px;\n  --padding-form-input: 14px;\n\n  --card-padding: 32px;\n  --card-margin-bottom: 20px;\n\n  /* Dimensions */\n  --container-width: 520px;\n  --submit-btn-height: 52px;\n  --checkbox-size: 18px;\n\n  /* Effects */\n  --box-shadow-card:\n    0 10px 35px -10px rgba(24, 59, 67, 0.12),\n    0 2px 8px rgba(24, 59, 67, 0.03);\n\n  --opacity-placeholder: 0.55;\n}\n"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -304,
+        480
+      ],
+      "id": "7db727f9-9608-4090-b1c3-42a25b542bb2",
+      "name": "On form submission",
+      "webhookId": "f9dd28fe-b9cd-4c5a-936e-353f6acea271"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8789cb68-8ee4-4bc2-a016-ef5629486ffc",
+              "name": "protocolo",
+              "value": "={{ $json.Protocolo }}",
+              "type": "string"
+            },
+            {
+              "id": "ffc26be5-1078-4742-a267-fa6f94cdf951",
+              "name": "razao_social",
+              "value": "={{ $json[\"Razão Social\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "73e656ab-2f68-4d31-a0c6-f6509feec342",
+              "name": "cnpj",
+              "value": "={{ $json.CNPJ }}",
+              "type": "string"
+            },
+            {
+              "id": "0a774e05-2ae9-44cc-b3a7-eba027e5b441",
+              "name": "representante",
+              "value": "={{ $json.Representante }}",
+              "type": "string"
+            },
+            {
+              "id": "164db42e-2930-4681-9dc7-69b33a94c87d",
+              "name": "email",
+              "value": "={{ $json[\"E-mail\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "22074bc2-bde9-49c5-8d87-512fa12be1da",
+              "name": "cep",
+              "value": "={{ $json.CEP }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        480
+      ],
+      "id": "bc8365e0-c41d-490d-9066-4d6562961d9f",
+      "name": "Dados"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Consulta Cep": {
+      "main": [
+        [
+          {
+            "node": "Endereco e de MT?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Erro na busca",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Endereco e de MT?": {
+      "main": [
+        [
+          {
+            "node": "SUCESSO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "FALHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Erro na busca": {
+      "main": [
+        [
+          {
+            "node": "registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SUCESSO": {
+      "main": [
+        [
+          {
+            "node": "registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FALHA": {
+      "main": [
+        [
+          {
+            "node": "registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados": {
+      "main": [
+        [
+          {
+            "node": "Consulta Cep",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "df04d3f1-1939-449d-9fa2-ce75541e97fb",
+  "meta": {
+    "instanceId": "5084dc20b8a26a5e0683bbc7376bb64498a7bcd025e26736ce6109b836f0329f"
+  },
+  "nodeGroups": [],
+  "id": "VlVRfZ8OCCfW0NsB",
+  "tags": []
+}
